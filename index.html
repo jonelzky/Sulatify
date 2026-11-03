@@ -2,46 +2,63 @@
 <html lang="tl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChiNhel Document Summarizer Explain and Write</title>
-<link href="https://fonts.googleapis.com/css2?family=Caveat&family=Kalam&family=Patrick+Hand&family=Shadows+Into+Light&family=Reenie+Beanie&family=Rock+Salt&family=Permanent+Marker&family=Gochi+Hand&family=Nothing+You+Could+Do&family=Walter+Turncoat&family=The+Girl+Next+Door&family=Sue+Ellen+Francisco&family=Zeyada&display=swap" rel="stylesheet">  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Kalam&family=Patrick+Hand&family=Shadows+Into+Light&family=Reenie+Beanie&family=Rock+Salt&family=Permanent+Marker&family=Gochi+Hand&family=Nothing+You+Could+Do&family=Walter+Turncoat&family=The+Girl+Next+Door&family=Sue+Ellen+Francisco&family=Zeyada&display=swap" rel="stylesheet">  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
   <style>
-  .sulatify-title{
-  font-size:22px !important;
-  font-weight:900 !important;
-  background: linear-gradient(90deg, #dc2626 0%, #ef4444 20%, #3b82f6 50%, #1e40af 70%, #111827 100%);
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  color: transparent !important;
-  /* Crayon effect */
-  text-shadow: 1px 1px 0px rgba(239,68,68,0.2), -1px -1px 0px rgba(59,130,246,0.2);
-  font-family: 'Rock Salt', cursive;
-  letter-spacing:1px;
-}
-  .handwritten { font-size:24px; line-height:2; white-space:pre-wrap; word-wrap:break-word; }
-.font-caveat{font-family:'Caveat',cursive;} .font-kalam{font-family:'Kalam',cursive;} .font-apple{font-family:'Homemade Apple',cursive;} .font-patrick{font-family:'Patrick Hand',cursive;} .font-shadows{font-family:'Shadows Into Light',cursive;}
-.lined-paper{background-image:repeating-linear-gradient(white 0px,white 31px,#94a3b8 31px,#94a3b8 32px);}
-.yellow-pad{background:#fef9c3; background-image:repeating-linear-gradient(#fef9c3 0px,#fef9c3 31px,#f59e0b 31px,#f59e0b 32px);}
-.ink-blue{color:#1e3a8a;} .ink-black{color:#111;}
+    .sulatify-title{
+      font-size:22px !important;
+      font-weight:900 !important;
+      background: linear-gradient(90deg, #dc2626 0%, #ef4444 20%, #3b82f6 50%, #1e40af 70%, #111827 100%);
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      color: transparent !important;
+      text-shadow: 1px 1px 0px rgba(239,68,68,0.2), -1px -1px 0px rgba(59,130,246,0.2);
+      font-family: 'Rock Salt', cursive;
+      letter-spacing:1px;
+    }
 
-/* HIGHLIGHT PARA SA MAHALAGANG TERM */
-.term-red, .term-blue, .term-orange {
-  color: inherit !important;
-  font-family: inherit !important;
-  font-weight: 700;
-  padding: 0px 3px !important;
-  border-radius: 1px !important;
-  line-height: 1.0 !important;
-  display: inline !important;
-}
+    /* PINA-AYOS: Gumagamit na ngayon ng --text-main para makita sa dark mode */
+    .handwritten { 
+      font-size:24px; 
+      line-height:2; 
+      white-space:pre-wrap; 
+      word-wrap:break-word; 
+      color: var(--text-main) !important; 
+    }
 
-.term-red { background: #f8b4b4 !important; }
-.term-blue { background: #93c5fd !important; }
-.term-orange { background: #fdba74 !important; }
-@media print { .fab-ai, .action-buttons, #hw-font, #hw-ink, #hw-paper { display:none !important; } #handwrittenCard { border:none; } }
+    .font-caveat{font-family:'Caveat',cursive;} 
+    .font-kalam{font-family:'Kalam',cursive;} 
+    .font-patrick{font-family:'Patrick Hand',cursive;} 
+    .font-shadows{font-family:'Shadows Into Light',cursive;}
+    
+    .lined-paper{background-image:repeating-linear-gradient(transparent 0px,transparent 31px,var(--border-color) 31px,var(--border-color) 32px);}
+    .yellow-pad{background:#fef9c3; background-image:repeating-linear-gradient(#fef9c3 0px,#fef9c3 31px,#f59e0b 31px,#f59e0b 32px);}
+    
+    .ink-blue{color:#3b82f6 !important;} 
+    .ink-black{color:var(--text-main) !important;}
+
+    .term-red, .term-blue, .term-orange {
+      color: inherit !important;
+      font-family: inherit !important;
+      font-weight: 700;
+      padding: 0px 3px !important;
+      border-radius: 1px !important;
+      line-height: 1.0 !important;
+      display: inline !important;
+    }
+
+    .term-red { background: #f8b4b4 !important; }
+    .term-blue { background: #93c5fd !important; }
+    .term-orange { background: #fdba74 !important; }
+    
+    @media print { 
+      .fab-ai, .action-buttons, #hw-font, #hw-ink, #hw-paper, #hw-highlight { display:none !important; } 
+      #handwrittenCard { border:none; } 
+    }
 
     :root[data-theme="light"] {
       --bg-color: #f1f5f9;
@@ -75,7 +92,7 @@
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
-      padding: 16px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -83,82 +100,48 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .container { width: 100%; max-width: 500px; }
+    .container { 
+      max-width: 1400px !important; 
+      width: 100% !important; 
+      margin: 0 auto;
+    }
     
-    /* SULAT KAMAY STYLE - PARA SA BUOD */
-.handwritten-box { background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:20px; margin-top:16px; }
-.handwritten { font-size:24px; line-height:2; color:#111; min-height:200px; white-space: pre-wrap; word-wrap: break-word; }
-.font-caveat{font-family:'Caveat',cursive}
-.font-kalam{font-family:'Kalam',cursive}
-.font-patrick{font-family:'Patrick Hand',cursive}
-.font-shadows{font-family:'Shadows Into Light',cursive}
-.font-reenie{font-family:'Reenie Beanie',cursive}
-.handwritten{font-size:24px; line-height:2; color:#111}
-.ink-black{color:#111 !important}
-.ink-blue{color:#1e40af !important}
-.lined-paper{background-color:#fffef0; background-image: repeating-linear-gradient(#fffef0 0px, #fffef0 31px, #a8d8ea 31px, #a8d8ea 32px)}
-.yellow-pad{background:#fef9c3}
-.fullscreen-mode {
-  position: fixed !important;
-  top: 0 !important; left: 0 !important;
-  width: 100vw !important; height: 100vh !important;
-  z-index: 9999 !important;
-  background: var(--bg, white) !important;
-  overflow-y: auto !important;
-  padding: 20px !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-}
-.font-indie{font-family:'Indie Flower',cursive}
-.font-architect{font-family:'Architects Daughter',cursive}
-.font-gloria{font-family:'Gloria Hallelujah',cursive}
-.font-handlee{font-family:'Handlee',cursive}
-.font-schoolbell{font-family:'Schoolbell',cursive}
-.font-dancing{font-family:'Dancing Script',cursive}
-.font-rock{font-family:'Rock Salt',cursive; font-size:14px}
-.font-permanent{font-family:'Permanent Marker',cursive; font-size:18px}
-.font-gochi{font-family:'Gochi Hand',cursive}
-.font-nothing{font-family:'Nothing You Could Do',cursive}
-.font-walter{font-family:'Walter Turncoat',cursive}
-.font-girl{font-family:'The Girl Next Door',cursive}
-.font-sue{font-family:'Sue Ellen Francisco',cursive}
-.font-zeyada{font-family:'Zeyada',cursive; font-size:24px}
+    .fullscreen-mode {
+      position: fixed !important;
+      top: 0 !important; left: 0 !important;
+      width: 100vw !important; height: 100vh !important;
+      z-index: 9999 !important;
+      background: var(--bg-color) !important;
+      overflow-y: auto !important;
+      padding: 20px !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
     .navbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
       background: var(--card-bg);
-      padding: 10px 16px;
+      padding: 14px 24px;
       border-radius: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       box-shadow: 0 4px 12px var(--shadow-color);
       border: 1px solid var(--border-color);
     }
 
     .brand { display: flex; align-items: center; gap: 10px; }
-
-    .brand-title {
-      display: flex;
-      flex-direction: column;
-      font-weight: 800;
-      font-size: 0.95rem;
-      line-height: 1.1;
-    }
-
-    .brand-title span:first-child { color: var(--text-main); }
-    .brand-title span:last-child { color: var(--accent-cyan); font-size: 0.8rem; letter-spacing: 1px; }
-
-    .nav-controls { display: flex; align-items: center; gap: 10px; }
+    .nav-controls { display: flex; align-items: center; gap: 12px; }
 
     .upload-btn-pill {
       background: linear-gradient(135deg, var(--accent-cyan), var(--accent-orange));
       color: #fff;
       border: none;
-      padding: 7px 14px;
+      padding: 9px 18px;
       border-radius: 20px;
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       cursor: pointer;
       box-shadow: 0 3px 10px rgba(0, 243, 255, 0.3);
       display: flex;
@@ -198,8 +181,8 @@
       background: var(--card-bg); 
       border: 1px solid var(--border-color); 
       border-radius: 18px; 
-      padding: 16px; 
-      margin-bottom: 16px; 
+      padding: 20px; 
+      margin-bottom: 20px; 
       box-shadow: 0 4px 16px var(--shadow-color);
     }
 
@@ -207,18 +190,18 @@
       background: var(--box-bg);
       border: 1px solid var(--border-color);
       color: var(--accent-cyan);
-      font-size: 0.8rem;
-      padding: 8px 12px;
+      font-size: 0.85rem;
+      padding: 10px 14px;
       border-radius: 20px;
       text-align: center;
-      margin-top: 10px;
+      margin-top: 12px;
       font-weight: 600;
     }
 
     .file-drop-area { 
       border: 2px dashed var(--accent-cyan); 
       border-radius: 14px; 
-      padding: 24px 16px; 
+      padding: 30px 20px; 
       text-align: center; 
       cursor: pointer; 
       position: relative; 
@@ -226,20 +209,20 @@
     }
 
     .file-drop-area input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-    .file-msg { font-size: 0.95rem; color: var(--text-main); font-weight: 700; }
-    .file-submsg { font-size: 0.8rem; color: var(--accent-cyan); margin-top: 4px; }
+    .file-msg { font-size: 1.05rem; color: var(--text-main); font-weight: 700; }
+    .file-submsg { font-size: 0.85rem; color: var(--accent-cyan); margin-top: 6px; }
 
-    .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
-    .summary-header h3 { color: var(--text-main); margin: 0; font-size: 1rem; font-weight: 800; }
+    .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .summary-header h3 { color: var(--text-main); margin: 0; font-size: 1.1rem; font-weight: 800; }
     
-    .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+    .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn { 
       background: var(--box-bg); 
       border: 1px solid var(--border-color); 
       color: var(--text-muted); 
-      padding: 6px 12px; 
+      padding: 8px 14px; 
       border-radius: 12px; 
-      font-size: 0.75rem; 
+      font-size: 0.8rem; 
       cursor: pointer; 
       font-weight: 600; 
       transition: all 0.2s;
@@ -250,14 +233,14 @@
     .summary-box, .explanation-box { 
       background: var(--box-bg); 
       border: 1px solid var(--border-color); 
-      padding: 14px; 
+      padding: 16px; 
       border-radius: 12px; 
       white-space: pre-wrap; 
       line-height: 1.6; 
       word-wrap: break-word; 
       color: var(--text-main); 
-      font-size: 0.9rem; 
-      max-height: 220px; 
+      font-size: 0.95rem; 
+      max-height: 280px; 
       overflow-y: auto; 
       outline: none; 
     }
@@ -265,35 +248,14 @@
     .explanation-box { border-left: 4px solid var(--accent-orange); }
     .summary-box { border-left: 4px solid var(--accent-cyan); }
 
-    .summary-box[contenteditable="true"], .explanation-box[contenteditable="true"] { 
-      border-color: var(--accent-orange); 
-      box-shadow: 0 0 10px rgba(255, 107, 74, 0.2);
-    }
-
-    .fullscreen-card {
-      position: fixed !important;
-      top: 0 !important; left: 0 !important;
-      width: 100vw !important; height: 100vh !important;
-      z-index: 9999 !important;
-      margin: 0 !important; border-radius: 0 !important;
-      display: flex !important; flex-direction: column !important;
-      padding: 20px !important;
-      background: var(--bg-color) !important;
-      border: none !important;
-    }
-    .fullscreen-card .summary-box, .fullscreen-card .explanation-box { flex-grow: 1 !important; max-height: none !important; font-size: 1rem !important; }
-
-    #historySection { display: none; margin-bottom: 16px; }
-    .history-item { background: var(--box-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
-    .history-title { font-weight: 700; font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .history-preview { font-size: 0.8rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 8px; }
-
+    #historySection { display: none; margin-bottom: 20px; }
+    
     .fab-ai {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
+      bottom: 24px;
+      right: 24px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--accent-cyan), var(--accent-orange));
       color: white;
@@ -303,7 +265,7 @@
       justify-content: center;
       box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       border: 2px solid #fff;
       z-index: 100;
     }
@@ -314,9 +276,7 @@
   <div class="container">
     <div class="navbar">
       <div class="brand">
-<div class="sulatify-title">Sulatify
-          
-        </div>
+        <div class="sulatify-title">Sulatify</div>
       </div>
       <div class="nav-controls">
         <button class="upload-btn-pill" onclick="triggerFileSelect()">↑ UPLOAD</button>
@@ -325,7 +285,7 @@
         </div>
       </div>
     </div>
-</div>
+
     <div class="card">
       <div class="file-drop-area" id="dropArea">
         <div class="file-msg">📂 Pumili ng PDF, Word, o Text file</div>
@@ -348,10 +308,10 @@
         <h3>⚙️ Mga Pagpipilian sa Ulat</h3>
         <button class="btn btn-primary" id="editBtn" onclick="toggleEdit()">I-edit Lahat</button>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <label style="font-size: 0.75rem; font-weight: 650; color: var(--text-muted); min-width: 90px;">Haba ng Buod:</label>
-          <select id="summaryLengthSelect" class="btn" style="padding: 4px 8px; flex-grow: 1;" onchange="reprocessContent()">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+          <label style="font-size: 0.8rem; font-weight: 650; color: var(--text-muted); min-width: 110px; flex-shrink: 0;">Haba ng Buod:</label>
+          <select id="summaryLengthSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="reprocessContent()">
             <option value="15">15% (Maikling Buod)</option>
             <option value="30">30% (Katamtaman)</option>
             <option value="45" selected>45% (Standard Detalye)</option>
@@ -360,18 +320,18 @@
           </select>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <label style="font-size: 0.75rem; font-weight: 650; color: var(--text-muted); min-width: 90px;">Wika ng Paliwanag:</label>
-          <select id="explanationLangSelect" class="btn" style="padding: 4px 8px; flex-grow: 1;" onchange="reprocessContent()">
+        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+          <label style="font-size: 0.8rem; font-weight: 650; color: var(--text-muted); min-width: 110px; flex-shrink: 0;">Wika ng Paliwanag:</label>
+          <select id="explanationLangSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="reprocessContent()">
             <option value="taglish" selected>Taglish (Pang-report)</option>
             <option value="english">English</option>
             <option value="tagalog">Tagalog</option>
           </select>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <label style="font-size: 0.75rem; font-weight: 650; color: var(--text-muted); min-width: 90px;">Haba ng Paliwanag:</label>
-          <select id="explanationLengthSelect" class="btn" style="padding: 4px 8px; flex-grow: 1;" onchange="reprocessContent()">
+        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+          <label style="font-size: 0.8rem; font-weight: 650; color: var(--text-muted); min-width: 110px; flex-shrink: 0;">Haba ng Paliwanag:</label>
+          <select id="explanationLengthSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="reprocessContent()">
             <option value="short">Maikling Overview (3 Points)</option>
             <option value="medium" selected>Katamtaman (Standard)</option>
             <option value="detailed">Detalyadong Paliwanag (Comprehensive)</option>
@@ -402,57 +362,63 @@
       </div>
       <div class="summary-box" id="summaryOutput" contenteditable="false">Dito lalabas ang buod ng buong dokumento...</div>
     </div>
-  </div>
 
-  <!-- SULATIFY - BUOD TO HANDWRITTEN -->
-  <div class="card" id="handwrittenCard" style="margin-top:16px;">
-    <div class="summary-header">
-      <h3 style="color: var(--accent-cyan);">✍️ Sulat Kamay na Buod</h3>
-      
-      <div class="action-buttons">
-<select id="hw-font" onchange="changeFont(this.value)">
-  <option value="font-caveat">Caveat - Maganda</option>
-  <option value="font-kalam">Kalam - Malinis</option>
-  <option value="font-patrick">Patrick Hand</option>
-  <option value="font-shadows">Shadows - Doctor</option>
-  <option value="font-reenie">Reenie Beanie</option>
-  <option value="font-indie">Indie Flower - Pang-Babae</option>
-<option value="font-architect">Architects Daughter - Pang-Engineer</option>
-<option value="font-gloria">Gloria - Pang-Madaliang Sulat</option>
-<option value="font-handlee">Handlee - Pang-Malinis</option>
-<option value="font-schoolbell">Schoolbell - Pang-Elementary</option>
-<option value="font-dancing">Dancing Script - Pang-Cursive</option>
-<option value="font-rock">Rock Salt - PINAKA-PANGET - Parang lasing</option>
-<option value="font-permanent">Permanent Marker - Pentel Pen - Makapal</option>
-<option value="font-nothing">Nothing You Could Do - Pang-Doctor talaga</option>
-<option value="font-walter">Walter Turncoat - Pang-Madumi</option>
-<option value="font-gochi">Gochi Hand - Pang-Bata - Malaki</option>
-<option value="font-girl">Girl Next Door - Pang-Babae - Pangit</option>
-<option value="font-sue">Sue Ellen - Manipis - Pangit</option>
-<option value="font-zeyada">Zeyada - Pang-Cursive na Pangit</option>
-</select>
+    <!-- SULATIFY - BUOD TO HANDWRITTEN -->
+    <div class="card" id="handwrittenCard" style="margin-top:20px;">
+      <div class="summary-header">
+        <h3 style="color: var(--accent-cyan);">✍️ Sulat Kamay na Buod</h3>
+        <div class="action-buttons">
+          <select id="hw-font" class="btn" onchange="changeFont(this.value)">
+            <option value="font-caveat">Caveat - Maganda</option>
+            <option value="font-kalam">Kalam - Malinis</option>
+            <option value="font-patrick">Patrick Hand</option>
+            <option value="font-shadows">Shadows - Doctor</option>
+            <option value="font-reenie">Reenie Beanie</option>
+            <option value="font-indie">Indie Flower</option>
+            <option value="font-architect">Architects Daughter</option>
+            <option value="font-gloria">Gloria</option>
+            <option value="font-handlee">Handlee</option>
+            <option value="font-schoolbell">Schoolbell</option>
+            <option value="font-dancing">Dancing Script</option>
+            <option value="font-rock">Rock Salt</option>
+            <option value="font-permanent">Permanent Marker</option>
+            <option value="font-nothing">Nothing You Could Do</option>
+            <option value="font-walter">Walter Turncoat</option>
+            <option value="font-gochi">Gochi Hand</option>
+            <option value="font-girl">Girl Next Door</option>
+            <option value="font-sue">Sue Ellen</option>
+            <option value="font-zeyada">Zeyada</option>
+          </select>
 
-<select id="hw-ink" onchange="changeInk(this.value)">
-  <option value="ink-black">Black</option>
-  <option value="ink-blue">Blue</option>
-</select>
-<select id="hw-highlight" onchange="toggleHighlight(this.value)">
-  <option value="with">May Highlight</option>
-  <option value="without">Walang Highlight</option>
-</select>
-<select id="hw-paper" onchange="changePaper(this.value)">
-  <option value="lined-paper">Lined</option>
-  <option value="yellow-pad">Yellow Pad</option>
-  <option value="plain">Plain</option>
-</select>
-        <button class="btn" onclick="window.print()">🖨️ I-print</button>
-        <button class="btn btn-primary" id="hwFullscreenBtn" onclick="toggleBoxFullscreen('handwrittenCard', 'hwFullscreenBtn')">⛶ Fullscreen</button>
+          <select id="hw-ink" class="btn" onchange="changeInk(this.value)">
+            <option value="ink-black">Black</option>
+            <option value="ink-blue">Blue</option>
+          </select>
+
+          <select id="hw-highlight" class="btn" onchange="toggleHighlight(this.value)">
+            <option value="with">May Highlight</option>
+            <option value="without">Walang Highlight</option>
+          </select>
+
+          <select id="hw-paper" class="btn" onchange="changePaper(this.value)">
+            <option value="lined-paper">Lined</option>
+            <option value="yellow-pad">Yellow Pad</option>
+            <option value="plain">Plain</option>
+          </select>
+
+          <button class="btn" onclick="window.print()">🖨️ I-print</button>
+          <button class="btn btn-primary" id="hwFullscreenBtn" onclick="toggleBoxFullscreen('handwrittenCard', 'hwFullscreenBtn')">⛶ Fullscreen</button>
+        </div>
       </div>
+      <div class="summary-box handwritten font-caveat ink-black lined-paper" id="handwrittenOutput" contenteditable="false" style="font-size:24px; line-height:2; min-height:250px; padding:20px;">Dito lalabas ang buod na sulat kamay...</div>
     </div>
-    <div class="summary-box handwritten font-caveat ink-black lined-paper" id="handwrittenOutput" contenteditable="false" style="font-size:24px; line-height:2; min-height:200px; padding:16px;">Dito lalabas ang buod na sulat kamay...</div>
   </div>
   
   <div class="fab-ai" onclick="toggleHistory()">History</div>
+
+</body>
+</html>
+
 
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
