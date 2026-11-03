@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="tl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ChiNhel Document Summarizer Explain and Write</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat&family=Kalam&family=Patrick+Hand&family=Shadows+Into+Light&family=Reenie+Beanie&family=Rock+Salt&family=Permanent+Marker&family=Gochi+Hand&family=Nothing+You+Could+Do&family=Walter+Turncoat&family=The+Girl+Next+Door&family=Sue+Ellen+Francisco&family=Zeyada&display=swap" rel="stylesheet">  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+  <style>
+  .sulatify-title{
+  font-size:22px !important;
+  font-weight:900 !important;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 20%, #3b82f6 50%, #1e40af 70%, #111827 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  /* Crayon effect */
+  text-shadow: 1px 1px 0px rgba(239,68,68,0.2), -1px -1px 0px rgba(59,130,246,0.2);
+  font-family: 'Rock Salt', cursive;
+  letter-spacing:1px;
+}
+  .handwritten { font-size:24px; line-height:2; white-space:pre-wrap; word-wrap:break-word; }
+.font-caveat{font-family:'Caveat',cursive;} .font-kalam{font-family:'Kalam',cursive;} .font-apple{font-family:'Homemade Apple',cursive;} .font-patrick{font-family:'Patrick Hand',cursive;} .font-shadows{font-family:'Shadows Into Light',cursive;}
+.lined-paper{background-image:repeating-linear-gradient(white 0px,white 31px,#94a3b8 31px,#94a3b8 32px);}
+.yellow-pad{background:#fef9c3; background-image:repeating-linear-gradient(#fef9c3 0px,#fef9c3 31px,#f59e0b 31px,#f59e0b 32px);}
+.ink-blue{color:#1e3a8a;} .ink-black{color:#111;}
+
+/* HIGHLIGHT PARA SA MAHALAGANG TERM */
+.term-red, .term-blue, .term-orange {
+  color: inherit !important;
+  font-family: inherit !important;
+  font-weight: 700;
+  padding: 0px 3px !important;
+  border-radius: 1px !important;
+  line-height: 1.0 !important;
+  display: inline !important;
+}
+
+.term-red { background: #f8b4b4 !important; }
+.term-blue { background: #93c5fd !important; }
+.term-orange { background: #fdba74 !important; }
+@media print { .fab-ai, .action-buttons, #hw-font, #hw-ink, #hw-paper { display:none !important; } #handwrittenCard { border:none; } }
+
+    :root[data-theme="light"] {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --card-header-bg: #e2e8f0;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-cyan: #00bcd4;
+      --accent-orange: #ff6b4a;
+      --shadow-color: rgba(0, 0, 0, 0.06);
+      --box-bg: #f8fafc;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-color: #0b0f19;
+      --card-bg: #151c2c;
+      --card-header-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-cyan: #00f3ff;
+      --accent-orange: #ff5533;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --box-bg: #0d1322;
+    }
+
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container { width: 100%; max-width: 500px; }
+    
+    /* SULAT KAMAY STYLE - PARA SA BUOD */
+.handwritten-box { background:#fff; border:1px solid #cbd5e1; border-radius:12px; padding:20px; margin-top:16px; }
+.handwritten { font-size:24px; line-height:2; color:#111; min-height:200px; white-space: pre-wrap; word-wrap: break-word; }
+.font-caveat{font-family:'Caveat',cursive}
+.font-kalam{font-family:'Kalam',cursive}
+.font-patrick{font-family:'Patrick Hand',cursive}
+.font-shadows{font-family:'Shadows Into Light',cursive}
+.font-reenie{font-family:'Reenie Beanie',cursive}
+.handwritten{font-size:24px; line-height:2; color:#111}
+.ink-black{color:#111 !important}
+.ink-blue{color:#1e40af !important}
+.lined-paper{background-color:#fffef0; background-image: repeating-linear-gradient(#fffef0 0px, #fffef0 31px, #a8d8ea 31px, #a8d8ea 32px)}
+.yellow-pad{background:#fef9c3}
+.fullscreen-mode {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  width: 100vw !important; height: 100vh !important;
+  z-index: 9999 !important;
+  background: var(--bg, white) !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+.font-indie{font-family:'Indie Flower',cursive}
+.font-architect{font-family:'Architects Daughter',cursive}
+.font-gloria{font-family:'Gloria Hallelujah',cursive}
+.font-handlee{font-family:'Handlee',cursive}
+.font-schoolbell{font-family:'Schoolbell',cursive}
+.font-dancing{font-family:'Dancing Script',cursive}
+.font-rock{font-family:'Rock Salt',cursive; font-size:14px}
+.font-permanent{font-family:'Permanent Marker',cursive; font-size:18px}
+.font-gochi{font-family:'Gochi Hand',cursive}
+.font-nothing{font-family:'Nothing You Could Do',cursive}
+.font-walter{font-family:'Walter Turncoat',cursive}
+.font-girl{font-family:'The Girl Next Door',cursive}
+.font-sue{font-family:'Sue Ellen Francisco',cursive}
+.font-zeyada{font-family:'Zeyada',cursive; font-size:24px}
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: var(--card-bg);
+      padding: 10px 16px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      font-weight: 800;
+      font-size: 0.95rem;
+      line-height: 1.1;
+    }
+
+    .brand-title span:first-child { color: var(--text-main); }
+    .brand-title span:last-child { color: var(--accent-cyan); font-size: 0.8rem; letter-spacing: 1px; }
+
+    .nav-controls { display: flex; align-items: center; gap: 10px; }
+
+    .upload-btn-pill {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-orange));
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 243, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .theme-toggle {
+      width: 44px;
+      height: 24px;
+      background: var(--border-color);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      padding: 2px;
+      transition: background 0.3s;
+    }
+
+    .theme-toggle-ball {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-orange);
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    :root[data-theme="dark"] .theme-toggle-ball {
+      transform: translateX(20px);
+      background: var(--accent-cyan);
+    }
+
+    .card { 
+      background: var(--card-bg); 
+      border: 1px solid var(--border-color); 
+      border-radius: 18px; 
+      padding: 16px; 
+      margin-bottom: 16px; 
+      box-shadow: 0 4px 16px var(--shadow-color);
+    }
+
+    .status-pill {
+      background: var(--box-bg);
+      border: 1px solid var(--border-color);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      border-radius: 20px;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    .file-drop-area { 
+      border: 2px dashed var(--accent-cyan); 
+      border-radius: 14px; 
+      padding: 24px 16px; 
+      text-align: center; 
+      cursor: pointer; 
+      position: relative; 
+      background: var(--box-bg);
+    }
+
+    .file-drop-area input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .file-msg { font-size: 0.95rem; color: var(--text-main); font-weight: 700; }
+    .file-submsg { font-size: 0.8rem; color: var(--accent-cyan); margin-top: 4px; }
+
+    .summary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px; }
+    .summary-header h3 { color: var(--text-main); margin: 0; font-size: 1rem; font-weight: 800; }
+    
+    .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+    .btn { 
+      background: var(--box-bg); 
+      border: 1px solid var(--border-color); 
+      color: var(--text-muted); 
+      padding: 6px 12px; 
+      border-radius: 12px; 
+      font-size: 0.75rem; 
+      cursor: pointer; 
+      font-weight: 600; 
+      transition: all 0.2s;
+    }
+    .btn-primary { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .btn-danger { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+    .summary-box, .explanation-box { 
+      background: var(--box-bg); 
+      border: 1px solid var(--border-color); 
+      padding: 14px; 
+      border-radius: 12px; 
+      white-space: pre-wrap; 
+      line-height: 1.6; 
+      word-wrap: break-word; 
+      color: var(--text-main); 
+      font-size: 0.9rem; 
+      max-height: 220px; 
+      overflow-y: auto; 
+      outline: none; 
+    }
+    
+    .explanation-box { border-left: 4px solid var(--accent-orange); }
+    .summary-box { border-left: 4px solid var(--accent-cyan); }
+
+    .summary-box[contenteditable="true"], .explanation-box[contenteditable="true"] { 
+      border-color: var(--accent-orange); 
+      box-shadow: 0 0 10px rgba(255, 107, 74, 0.2);
+    }
+
+    .fullscreen-card {
+      position: fixed !important;
+      top: 0 !important; left: 0 !important;
+      width: 100vw !important; height: 100vh !important;
+      z-index: 9999 !important;
+      margin: 0 !important; border-radius: 0 !important;
+      display: flex !important; flex-direction: column !important;
+      padding: 20px !important;
+      background: var(--bg-color) !important;
+      border: none !important;
+    }
+    .fullscreen-card .summary-box, .fullscreen-card .explanation-box { flex-grow: 1 !important; max-height: none !important; font-size: 1rem !important; }
+
+    #historySection { display: none; margin-bottom: 16px; }
+    .history-item { background: var(--box-bg); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; margin-bottom: 10px; }
+    .history-title { font-weight: 700; font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .history-preview { font-size: 0.8rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 8px; }
+
+    .fab-ai {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-orange));
+      color: white;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
+      cursor: pointer;
+      font-size: 0.9rem;
+      border: 2px solid #fff;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="navbar">
+      <div class="brand">
+<div class="sulatify-title">Sulatify
+          
+        </div>
+      </div>
+      <div class="nav-controls">
+        <button class="upload-btn-pill" onclick="triggerFileSelect()">↑ UPLOAD</button>
+        <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+          <div class="theme-toggle-ball" id="toggleBall">☀️</div>
+        </div>
+      </div>
+    </div>
+</div>
+    <div class="card">
+      <div class="file-drop-area" id="dropArea">
+        <div class="file-msg">📂 Pumili ng PDF, Word, o Text file</div>
+        <div class="file-submsg" id="fileNameDisplay">Walang napiling file</div>
+        <input type="file" id="fileInput" accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+      </div>
+      <div class="status-pill" id="status">• Pumili ng file</div>
+    </div>
+
+    <div class="card" id="historySection">
+      <div class="summary-header">
+        <h3>📂 Mga Nakaraang Buod</h3>
+        <button class="btn btn-danger" onclick="clearAllHistory()">Burahin Lahat</button>
+      </div>
+      <div id="historyList" style="max-height: 250px; overflow-y: auto; margin-top: 10px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="summary-header">
+        <h3>⚙️ Mga Pagpipilian sa Ulat</h3>
+        <button class="btn btn-primary" id="editBtn" onclick="toggleEdit()">I-edit Lahat</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 0.75rem; font-weight: 650; color: var(--text-muted); min-width: 90px;">Haba ng Buod:</label>
+          <select id="summaryLengthSelect" class="btn" style="padding: 4px 8px; flex-grow: 1;" onchange="reprocessContent()">
+            <option value="15">15% (Maikling Buod)</option>
+            <option value="30">30% (Katamtaman)</option>
+            <option value="45" selected>45% (Standard Detalye)</option>
+            <option value="60">60% (Mahabang Bersyon)</option>
+            <option value="75">75% (Kalahati pataas / Halos Buo)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 0.75rem; font-weight: 650; color: var(--text-muted); min-width: 90px;">Wika ng Paliwanag:</label>
+          <select id="explanationLangSelect" class="btn" style="padding: 4px 8px; flex-grow: 1;" onchange="reprocessContent()">
+            <option value="taglish" selected>Taglish (Pang-report)</option>
+            <option value="english">English</option>
+            <option value="tagalog">Tagalog</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 0.75rem; font-weight: 650; color: var(--text-muted); min-width: 90px;">Haba ng Paliwanag:</label>
+          <select id="explanationLengthSelect" class="btn" style="padding: 4px 8px; flex-grow: 1;" onchange="reprocessContent()">
+            <option value="short">Maikling Overview (3 Points)</option>
+            <option value="medium" selected>Katamtaman (Standard)</option>
+            <option value="detailed">Detalyadong Paliwanag (Comprehensive)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="explanationCard">
+      <div class="summary-header">
+        <h3 style="color: var(--accent-orange);">💡 Paliwanag (Overview)</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="expFullscreenBtn" onclick="toggleBoxFullscreen('explanationCard', 'expFullscreenBtn')">⛶ Fullscreen</button>
+          <button class="btn" onclick="copyText(explanationOutput.innerText, 'Nakopya na ang Paliwanag!')">Kopyahin</button>
+        </div>
+      </div>
+      <div class="explanation-box" id="explanationOutput" contenteditable="false">Dito lalabas ang maikling paliwanag at konteksto para sa iyong ulat...</div>
+    </div>
+
+    <div class="card" id="summaryCard">
+      <div class="summary-header">
+        <h3 style="color: var(--accent-cyan);">📑 Mismong Buod</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="sumFullscreenBtn" onclick="toggleBoxFullscreen('summaryCard', 'sumFullscreenBtn')">⛶ Fullscreen</button>
+          <button class="btn" onclick="copyText(summaryOutput.innerText, 'Nakopya na ang Buod!')">Kopyahin</button>
+          <button class="btn btn-primary" onclick="shareSummary()">I-share</button>
+        </div>
+      </div>
+      <div class="summary-box" id="summaryOutput" contenteditable="false">Dito lalabas ang buod ng buong dokumento...</div>
+    </div>
+  </div>
+
+  <!-- SULATIFY - BUOD TO HANDWRITTEN -->
+  <div class="card" id="handwrittenCard" style="margin-top:16px;">
+    <div class="summary-header">
+      <h3 style="color: var(--accent-cyan);">✍️ Sulat Kamay na Buod</h3>
+      
+      <div class="action-buttons">
+<select id="hw-font" onchange="changeFont(this.value)">
+  <option value="font-caveat">Caveat - Maganda</option>
+  <option value="font-kalam">Kalam - Malinis</option>
+  <option value="font-patrick">Patrick Hand</option>
+  <option value="font-shadows">Shadows - Doctor</option>
+  <option value="font-reenie">Reenie Beanie</option>
+  <option value="font-indie">Indie Flower - Pang-Babae</option>
+<option value="font-architect">Architects Daughter - Pang-Engineer</option>
+<option value="font-gloria">Gloria - Pang-Madaliang Sulat</option>
+<option value="font-handlee">Handlee - Pang-Malinis</option>
+<option value="font-schoolbell">Schoolbell - Pang-Elementary</option>
+<option value="font-dancing">Dancing Script - Pang-Cursive</option>
+<option value="font-rock">Rock Salt - PINAKA-PANGET - Parang lasing</option>
+<option value="font-permanent">Permanent Marker - Pentel Pen - Makapal</option>
+<option value="font-nothing">Nothing You Could Do - Pang-Doctor talaga</option>
+<option value="font-walter">Walter Turncoat - Pang-Madumi</option>
+<option value="font-gochi">Gochi Hand - Pang-Bata - Malaki</option>
+<option value="font-girl">Girl Next Door - Pang-Babae - Pangit</option>
+<option value="font-sue">Sue Ellen - Manipis - Pangit</option>
+<option value="font-zeyada">Zeyada - Pang-Cursive na Pangit</option>
+</select>
+
+<select id="hw-ink" onchange="changeInk(this.value)">
+  <option value="ink-black">Black</option>
+  <option value="ink-blue">Blue</option>
+</select>
+<select id="hw-highlight" onchange="toggleHighlight(this.value)">
+  <option value="with">May Highlight</option>
+  <option value="without">Walang Highlight</option>
+</select>
+<select id="hw-paper" onchange="changePaper(this.value)">
+  <option value="lined-paper">Lined</option>
+  <option value="yellow-pad">Yellow Pad</option>
+  <option value="plain">Plain</option>
+</select>
+        <button class="btn" onclick="window.print()">🖨️ I-print</button>
+        <button class="btn btn-primary" id="hwFullscreenBtn" onclick="toggleBoxFullscreen('handwrittenCard', 'hwFullscreenBtn')">⛶ Fullscreen</button>
+      </div>
+    </div>
+    <div class="summary-box handwritten font-caveat ink-black lined-paper" id="handwrittenOutput" contenteditable="false" style="font-size:24px; line-height:2; min-height:200px; padding:16px;">Dito lalabas ang buod na sulat kamay...</div>
+  </div>
+  
+  <div class="fab-ai" onclick="toggleHistory()">History</div>
+
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    const fileInput = document.getElementById('fileInput');
+    const statusDiv = document.getElementById('status');
+    const summaryOutput = document.getElementById('summaryOutput');
+    const explanationOutput = document.getElementById('explanationOutput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const historySection = document.getElementById('historySection');
+    const historyList = document.getElementById('historyList');
+    let rawExtractedText = '';
+    let currentFileName = '';
+    let originalSummaryText = "";
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHistory();
+      const savedTheme = localStorage.getItem('xf_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      const ball = document.getElementById('toggleBall');
+      if(ball) ball.innerText = savedTheme === 'dark' ? '🌙' : '☀️';
+    });
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('xf_theme', next);
+      document.getElementById('toggleBall').innerText = next === 'dark' ? '🌙' : '☀️';
+    }
+
+    function triggerFileSelect() { fileInput.click(); }
+
+    fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      currentFileName = file.name;
+      fileNameDisplay.innerText = currentFileName;
+      statusDiv.innerText = '• PROCESSING: Binabasa ang file...';
+      summaryOutput.innerText = 'Naglo-load pa ang mga pahina...';
+      explanationOutput.innerText = 'Inihahanda ang paliwanag...';
+      const hw = document.getElementById('handwrittenOutput');
+      if(hw) hw.innerText = 'Ginagawa ang sulat kamay...';
+      try {
+        const fileName = file.name.toLowerCase();
+        if (fileName.endsWith('.pdf')) rawExtractedText = await extractTextFromPDF(file);
+        else if (fileName.endsWith('.docx')) rawExtractedText = await extractTextFromWord(file);
+        else if (fileName.endsWith('.txt')) rawExtractedText = await extractTextFromTxt(file);
+        else throw new Error('Hindi suportadong uri ng file.');
+        if (!rawExtractedText || rawExtractedText.trim().length === 0) {
+          statusDiv.innerText = '• ERROR: Walang nabasang text.';
+          return;
+        }
+        reprocessContent();
+        statusDiv.innerText = '• Summary & Explanation Complete!';
+      } catch (err) {
+        console.error(err);
+        statusDiv.innerText = '• ERROR: ' + err.message;
+      }
+    });
+
+    async function extractTextFromPDF(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        statusDiv.innerText = `• READING: Pahina ${i} ng ${pdf.numPages}...`;
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+      }
+      return fullText;
+    }
+
+    async function extractTextFromWord(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+      return result.value;
+    }
+
+    function extractTextFromTxt(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Hindi nabasa ang text file.'));
+        reader.readAsText(file);
+      });
+    }
+
+    // FULLSCREEN
+    function toggleBoxFullscreen(cardId, btnId) {
+      const card = document.getElementById(cardId);
+      const btn = document.getElementById(btnId);
+      const isFs = card.classList.toggle('fullscreen-card');
+      if(btn) btn.innerText = isFs ? '⤫ Lumabas' : '⛶ Fullscreen';
+    }
+
+    // HIGHLIGHT - ISA LANG - WALANG DOBLE
+function highlightImportantTerms(text){
+  let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  html=html.replace(/\b([A-Z]{2,}(?:\s+[A-Z]{2,})*)\b/g,'<span class="term-red">$1</span>');
+  html=html.replace(/\b([A-Z][a-z]*oma[s]?)\b/g,'<span class="term-blue">$1</span>');
+  html=html.replace(/\b(tumors?|brain|spinal cord|meninges)\b/gi,'<span class="term-orange">$1</span>');
+  return html;
+}
+function generateExtractiveSummary(text) {
+  const percentageVal = document.getElementById('summaryLengthSelect') ? parseInt(document.getElementById('summaryLengthSelect').value) : 45;
+  let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 40);
+  if (lines.length < 15) {
+    let sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    lines = sentences.map(s => s.trim()).filter(s => s.length > 25);
+  }
+
+  let scored = lines.map((line, index) => {
+    let score = 0;
+    let lower = line.toLowerCase();
+    if (/[A-Z]{3,}/.test(line)) score += 3;
+    if (lower.includes('important') || lower.includes('definition') || lower.includes('brain') || lower.includes('tumor') || lower.includes('disease') || lower.includes('hydrocephalus') || lower.includes('syndrome')) score += 5;
+    if (lower.includes('function') || lower.includes('causes') || lower.includes('treatment')) score += 3;
+    if (/\d+%?/.test(line)) score += 2;
+    if (index < 10) score += 2;
+    return { line, score, index };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  let ratio = percentageVal / 100;
+  let targetCount = Math.floor(lines.length * ratio);
+  targetCount = Math.max(5, targetCount);
+  
+  if(lines.length > 500){
+    let maxLimit = percentageVal <= 15 ? 40 : percentageVal <= 30 ? 60 : percentageVal <= 45 ? 80 : percentageVal <= 60 ? 120 : 150;
+    if(targetCount > maxLimit) targetCount = maxLimit;
+  }
+  
+  if (targetCount > lines.length) targetCount = lines.length;
+  let top = scored.slice(0, targetCount);
+  top.sort((a, b) => a.index - b.index);
+  return top.map(item => `• ${item.line}`).join('\n\n');
+}
+
+function generateExplanation(fullText, summaryText){
+  const lang = document.getElementById('explanationLanguageSelect') ? document.getElementById('explanationLanguageSelect').value : 'taglish';
+  
+  // Gamitin yung buong summary - hindi fullText lang
+  let source = summaryText || fullText;
+  let lines = source.split('\n').map(l => l.replace('•','').trim()).filter(l => l.length > 20);
+  
+  let explanation = "";
+  
+  if(lang === 'taglish' || lang === 'tl'){
+    explanation += `📌 BUONG PALIWANAG NG BUOD (${lines.length} puntos):\n\n`;
+    lines.forEach((line, i) => {
+      let lower = line.toLowerCase();
+      let simple = "";
+      
+      if(lower.includes('brain') || lower.includes('cerebral')){
+        simple = `👉 Ibig sabihin, yung utak - ${line.substring(0,120)}... Sa madaling salita, importante ito sa pag-iisip at galaw.`;
+      } else if(lower.includes('tumor') || lower.includes('oma')){
+        simple = `👉 Tumor ito - ${line.substring(0,120)}... Ibig sabihin, may bukol na pwedeng benign o malignant.`;
+      } else if(lower.includes('hydrocephalus')){
+        simple = `👉 Hydrocephalus - ${line.substring(0,120)}... Ibig sabihin, may sobrang fluid sa utak.`;
+      } else if(lower.includes('disease') || lower.includes('syndrome')){
+        simple = `👉 Sakit ito - ${line.substring(0,120)}... Kailangan maintindihan sintomas at gamot.`;
+      } else {
+        simple = `👉 Punto ${i+1}: ${line.substring(0,150)}... Sa madaling salita, ${line.substring(0,100)}.`;
+      }
+      
+      explanation += `${simple}\n\n`;
+    });
+    
+    explanation += `\n💡 BUOD NG PALIWANAG: Lahat ng ${lines.length} puntos sa taas ay konektado - tungkol sa utak, sakit, at paano gamutin. Basahin ulit yung sulat kamay para mas maalala!`;
+    
+  } else {
+    explanation += `📌 FULL EXPLANATION OF SUMMARY (${lines.length} points):\n\n`;
+    lines.forEach((line, i) => {
+      explanation += `👉 Point ${i+1}: ${line.substring(0,150)}... In simple terms, this is important for understanding the topic.\n\n`;
+    });
+  }
+  
+  return explanation;
+}
+
+    // BUONG TAMANG reprocessContent - MAY HANDWRITTEN NA + HISTORY
+function reprocessContent() {
+  if (!rawExtractedText) return;
+  const summary = generateExtractiveSummary(rawExtractedText);
+  const explanation = generateExplanation(rawExtractedText, summary);
+  originalSummaryText = summary;
+  summaryOutput.innerText = summary;
+  const hw = document.getElementById('handwrittenOutput');
+  if(hw){
+    const hlSel = document.getElementById('hw-highlight');
+    if(hlSel && hlSel.value.toLowerCase().includes('without')){
+      hw.innerText = summary;
+    } else {
+      hw.innerHTML = highlightImportantTerms(summary);
+    }
+  }
+  explanationOutput.innerText = explanation;
+  saveToHistory(currentFileName, summary, explanation);
+  applyAll();
+}
+    function saveToHistory(title, content, explanation) {
+      let history = JSON.parse(localStorage.getItem('pdf_summaries') || '[]');
+      history.unshift({ id: Date.now(), title: title, content: content, explanation: explanation, date: new Date().toLocaleDateString() });
+      if (history.length > 20) history.pop();
+      localStorage.setItem('pdf_summaries', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      let history = JSON.parse(localStorage.getItem('pdf_summaries') || '[]');
+      if (history.length === 0) {
+        historyList.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Wala pang history.</div>';
+        return;
+      }
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <div class="history-title"><span>📎 ${item.title}</span><span>${item.date}</span></div>
+          <div class="history-preview">${item.content.substring(0,100)}...</div>
+          <div style="display:flex; justify-content:flex-end; gap:6px;">
+            <button class="btn btn-primary" onclick="loadHistoryItem(${item.id})">Tingnan</button>
+            <button class="btn btn-danger" onclick="deleteHistoryItem(${item.id})">Burahin</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // DITO INAYOS - MAY HANDWRITTEN NA SA HISTORY
+    function loadHistoryItem(id) {
+      let history = JSON.parse(localStorage.getItem('pdf_summaries') || '[]');
+      let item = history.find(h => h.id === id);
+      if (item) {
+        currentFileName = item.title;
+        fileNameDisplay.innerText = item.title;
+        summaryOutput.innerText = item.content;
+        const hw = document.getElementById('handwrittenOutput');
+        if(hw) hw.innerHTML = highlightImportantTerms(item.content);
+        explanationOutput.innerText = item.explanation || 'Walang paliwanag.';
+        statusDiv.innerText = '• LOADED: Na-load mula sa History.';
+        toggleHistory();
+      }
+    }
+
+    function deleteHistoryItem(id) {
+      let history = JSON.parse(localStorage.getItem('pdf_summaries') || '[]');
+      history = history.filter(h => h.id !== id);
+      localStorage.setItem('pdf_summaries', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function toggleHistory() {
+      historySection.style.display = historySection.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleEdit() {
+      const isEditing = summaryOutput.contentEditable === 'true';
+      summaryOutput.contentEditable = !isEditing;
+      explanationOutput.contentEditable = !isEditing;
+    }
+
+    function copyText(text, msg) { navigator.clipboard.writeText(text).then(() => alert(msg)); }
+    function shareSummary() {
+      const textToShare = `📄 ${currentFileName}:\n\n${explanationOutput.innerText}\n\n${summaryOutput.innerText}`;
+      if (navigator.share) navigator.share({ title: 'Summary', text: textToShare });
+      else { navigator.clipboard.writeText(textToShare); alert('Na-copy na!'); }
+    }
+    
+function applyAll(){
+  const hw = document.getElementById('handwrittenOutput');
+  const fontSel = document.getElementById('hw-font');
+  const inkSel = document.getElementById('hw-ink');
+  const paperSel = document.getElementById('hw-paper');
+  if(!hw) return;
+
+  // FONT - Kalam, Caveat, Shadows, etc.
+  let f = fontSel ? fontSel.value.toLowerCase() : 'caveat';
+  if(f.includes('kalam') || f.includes('malinis')) hw.style.setProperty('font-family', "'Kalam', cursive", 'important');
+  else if(f.includes('reenie')) hw.style.setProperty('font-family', "'Reenie Beanie', cursive", 'important');
+  else if(f.includes('shadows') || f.includes('doctor')) hw.style.setProperty('font-family', "'Shadows Into Light', cursive", 'important');
+  else if(f.includes('patrick')) hw.style.setProperty('font-family', "'Patrick Hand', cursive", 'important');
+ else if(f.includes('indie') || f.includes('babae')) hw.style.setProperty('font-family', "'Indie Flower', cursive", 'important');
+else if(f.includes('architect')) hw.style.setProperty('font-family', "'Architects Daughter', cursive", 'important');
+else if(f.includes('gloria') || f.includes('madalian')) hw.style.setProperty('font-family', "'Gloria Hallelujah', cursive", 'important');
+else if(f.includes('handlee')) hw.style.setProperty('font-family', "'Handlee', cursive", 'important');
+else if(f.includes('schoolbell')) hw.style.setProperty('font-family', "'Schoolbell', cursive", 'important');
+else if(f.includes('dancing') || f.includes('cursive')) hw.style.setProperty('font-family', "'Dancing Script', cursive", 'important');
+ else if(f.includes('rock') || f.includes('lasing') || f.includes('pinaka')) hw.style.setProperty('font-family', "'Rock Salt', cursive", 'important');
+else if(f.includes('permanent') || f.includes('pentel') || f.includes('makapal')) hw.style.setProperty('font-family', "'Permanent Marker', cursive", 'important');
+else if(f.includes('nothing') || f.includes('doctor talaga')) hw.style.setProperty('font-family', "'Nothing You Could Do', cursive", 'important');
+else if(f.includes('walter') || f.includes('madumi')) hw.style.setProperty('font-family', "'Walter Turncoat', cursive", 'important');
+else if(f.includes('gochi') || f.includes('bata')) hw.style.setProperty('font-family', "'Gochi Hand', cursive", 'important');
+else if(f.includes('girl')) hw.style.setProperty('font-family', "'The Girl Next Door', cursive", 'important');
+else if(f.includes('sue')) hw.style.setProperty('font-family', "'Sue Ellen Francisco', cursive", 'important');
+else if(f.includes('zeyada')) hw.style.setProperty('font-family', "'Zeyada', cursive", 'important');
+else hw.style.setProperty('font-family', "'Caveat', cursive", 'important');
+
+  // INK - BLUE / BLACK - may !important para talunin highlight
+  let ink = inkSel ? inkSel.value.toLowerCase() : 'black';
+  if(ink.includes('blue')) hw.style.setProperty('color', '#1e40af', 'important');
+  else hw.style.setProperty('color', '#111111', 'important');
+
+  // PAPER + SAKTO SA GUHIT - 35px lahat
+  let paper = paperSel ? paperSel.value.toLowerCase() : 'lined';
+  hw.style.setProperty('line-height', '37px', 'important');
+  hw.style.setProperty('font-size', '23px', 'important');
+  hw.style.setProperty('background-size', '100% 32px', 'important');
+  hw.style.setProperty('padding-top', '2px', 'important');
+
+  if(paper.includes('yellow')){
+    hw.style.setProperty('background-color', '#fef9c3', 'important');
+    hw.style.setProperty('background-image', 'repeating-linear-gradient(transparent 0px, transparent 31px, #a8d8ea 31px, #a8d8ea 32px)', 'important');
+  } else if(paper.includes('lined')){
+    hw.style.setProperty('background-color', '#fffef0', 'important');
+    hw.style.setProperty('background-image', 'repeating-linear-gradient(transparent 0px, transparent 31px, #a8d8ea 31px, #a8d8ea 32px)', 'important');
+  } else {
+    hw.style.setProperty('background-color', '#ffffff', 'important');
+    hw.style.setProperty('background-image', 'none', 'important');
+  }
+}
+
+function changeFont(val){ applyAll(); }
+function changeInk(val){ applyAll(); }
+function changePaper(val){ applyAll(); }
+
+function toggleHighlight(val){
+  const hw = document.getElementById('handwrittenOutput');
+  if(!hw) return;
+  if(!originalSummaryText || originalSummaryText === ""){
+    originalSummaryText = summaryOutput.innerText;
+  }
+  let v = val.toLowerCase();
+  if(v.includes('without') || v.includes('walang') || v.includes('wala')){
+    hw.innerText = originalSummaryText;
+  } else {
+    hw.innerHTML = highlightImportantTerms(originalSummaryText);
+  }
+  applyAll();
+}
+</script>
+  </script>
+</body>
+</html>
