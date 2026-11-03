@@ -1,25 +1,26 @@
-# SULATIFY - App #10 📝
+# 🔗 Sulatify - PDF to Handwritten Summary
 
-PDF to Handwritten Summary App — Part of ChiNhel XFORGE 2026
+**PDF to Handwritten Summary App — App #10 of ChiNhel XFORGE 2026**
 
-**Hosted:** https://jonelzky.github.io/Sulatify
+Convert PDFs into handwritten-style summaries with yellow pad design.
 
-## Features ✨
-- 📄 PDF to handwritten style summary
-- 📓 Yellow pad style with 37px line alignment
-- 🕘 Small circular History button
-- 🖥️ Full-width PC layout (95%/100%)
-- 📱 PWA + APK — no watermark, pure Termux build
+Made for Students • Yellow Pad Style • Offline Ready © 2026 ChiNhel XForge
 
-## Tech
-- HTML, CSS, JS — yellow pad CSS, 37px lines
-- GitHub Pages + GitHub Actions APK build
-- No third-party builders
+### 🔗 Live Demo: https://jonelzky.github.io/Sulatify/
 
-## Build APK via GitHub Actions
-Push to main → Actions → Build APK → Download artifact Sulatify-APK
+### 🔗 Features:
+- **PDF to Handwritten:** Convert PDFs into handwritten-style summaries
+- **Yellow Pad Style:** 37px line alignment — real notebook feel
+- **History:** Small circular History button — track your summaries
+- **Fullscreen PC:** 95%/100% width — full-width on PC and web
+- **PWA + APK:** Installable, offline ready
 
-## Part of Hub
-Main Hub: https://jonelzky.github.io — 10 apps autofetch, animated neon border
+### 🔗 Built with HTML/CSS/JS - Yellow Pad CSS!
 
-Made with ❤️ by Jonel Garvin Malabayabas — ChiNhel XFORGE 2026
+### 🔗 Screenshots: Coming soon!
+
+Built purely on Termux - Phone Only!
+
+### 🔗 Download APK: Coming soon - Built purely on phone!
+
+### Updated Wed Nov 5 2026
