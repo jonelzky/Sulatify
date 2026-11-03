@@ -1,47 +1,25 @@
-# 📒 SULATIFY - App #10
-### PDF to Handwritten Summary - Para kay BSRTTuyo
+# SULATIFY - App #10 📝
 
-**SULATIFY** ang pinaka-realistic na PDF to handwritten notes converter - parang totoong sulat-kamay sa yellow pad!
+PDF to Handwritten Summary App — Part of ChiNhel XFORGE 2026
 
-### ✨ Features
+**Hosted:** https://jonelzky.github.io/Sulatify
 
-- **📄 108 Pages Support** - Kahit 108 pages na PDF, kaya!
-- **✍️ 37px Perfect Alignment** - Sakto sa blue lines ng yellow pad
-- **🎨 Real Handwritten Fonts:** Reenie Beanie, Rock Salt, Permanent Marker, Gochi Hand, Nothing You Could Do, Walter Turncoat, Caveat
-- **🖊️ Ink Colors:** Black, Blue, Red
-- **📒 Paper:** Yellow Pad, White, Lined
-- **🌈 Highlight Toggle:** May / Walang Highlight - black text + colored background
-- **📏 Summary Length:** 15% / 30% / 45% / 60% / 75% with smart scoring
-- **🖍️ Crayon Gradient Title:** Red-Blue-Black gradient na parang crayon
-- **📖 Taglish Explanation** - Full summary explanation
+## Features ✨
+- 📄 PDF to handwritten style summary
+- 📓 Yellow pad style with 37px line alignment
+- 🕘 Small circular History button
+- 🖥️ Full-width PC layout (95%/100%)
+- 📱 PWA + APK — no watermark, pure Termux build
 
-### 🚀 Live Demo
-**https://jonelzky.github.io/Sulatify/**
+## Tech
+- HTML, CSS, JS — yellow pad CSS, 37px lines
+- GitHub Pages + GitHub Actions APK build
+- No third-party builders
 
-### 📱 How to Use
-1. Upload PDF file
-2. Piliin Font, Ink Color, Paper, Highlight, Summary Length
-3. Click Generate
-4. Fullview 100% - parang totoong notebook!
-5. Download as image or print
+## Build APK via GitHub Actions
+Push to main → Actions → Build APK → Download artifact Sulatify-APK
 
-### 🛠️ Tech Stack
-- HTML5 + CSS3 + JavaScript
-- PDF.js for PDF reading
-- Google Fonts Handwritten
-- GitHub Pages
+## Part of Hub
+Main Hub: https://jonelzky.github.io — 10 apps autofetch, animated neon border
 
-### 🏷️ Version
-- **v1.0 FINAL** - App #10 - Pure SULATIFY (No KimSumSum/BSRTSum)
-- 37px perfect line-height
-- Icon: Yellow pad + S crayon + pencil
-
-### 👨‍💻 Author
-**Jonel Garvin Malabayabas** - BSRTTuyo
-
----
-**SULATIFY - Sulat + Simplify! 📒✨**
-*Gawang Pinoy, para sa estudyanteng puyat!*
-# Updated Wed Nov  4 06:26:13 PST 2026
-# Updated Wed Nov  4 06:29:21 PST 2026
-# Updated Wed Nov  4 06:32:32 PST 2026
+Made with ❤️ by Jonel Garvin Malabayabas — ChiNhel XFORGE 2026
