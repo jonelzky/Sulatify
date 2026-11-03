@@ -1,0 +1,16 @@
+{
+  "name": "SULATIFY - PDF to Handwritten Summary",
+  "short_name": "SULATIFY",
+  "description": "PDF to realistic handwritten notes - App #10",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fef08a",
+  "theme_color": "#facc15",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
