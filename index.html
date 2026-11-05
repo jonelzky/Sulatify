@@ -21,7 +21,6 @@
       letter-spacing:1px;
     }
 
-    /* PINA-AYOS: Gumagamit na ngayon ng --text-main para makita sa dark mode */
     .handwritten { 
       font-size:24px; 
       line-height:2; 
@@ -106,16 +105,28 @@
       margin: 0 auto;
     }
     
-    .fullscreen-mode {
+    .fullscreen-card {
       position: fixed !important;
-      top: 0 !important; left: 0 !important;
-      width: 100vw !important; height: 100vh !important;
-      z-index: 9999 !important;
-      background: var(--bg-color) !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      z-index: 999999 !important;
+      background-color: var(--card-bg) !important;
       overflow-y: auto !important;
-      padding: 20px !important;
+      padding: 24px !important;
       margin: 0 !important;
       border-radius: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .fullscreen-card .summary-box,
+    .fullscreen-card .explanation-box,
+    .fullscreen-card .quiz-box {
+      max-height: none !important;
+      height: calc(100vh - 140px) !important;
     }
 
     .navbar {
@@ -230,7 +241,7 @@
     .btn-primary { border-color: var(--accent-cyan); color: var(--accent-cyan); }
     .btn-danger { border-color: var(--accent-orange); color: var(--accent-orange); }
 
-    .summary-box, .explanation-box { 
+    .summary-box, .explanation-box, .quiz-box { 
       background: var(--box-bg); 
       border: 1px solid var(--border-color); 
       padding: 16px; 
@@ -240,15 +251,16 @@
       word-wrap: break-word; 
       color: var(--text-main); 
       font-size: 0.95rem; 
-      max-height: 280px; 
+      max-height: 350px; 
       overflow-y: auto; 
       outline: none; 
     }
     
     .explanation-box { border-left: 4px solid var(--accent-orange); }
     .summary-box { border-left: 4px solid var(--accent-cyan); }
+    .quiz-box { border-left: 4px solid #10b981; }
 
-    #historySection { display: none; margin-bottom: 20px; }
+    #historySection, #explanationCard, #handwrittenCard, #quizCard { display: none; }
     
     .fab-ai {
       position: fixed;
@@ -269,6 +281,34 @@
       border: 2px solid #fff;
       z-index: 100;
     }
+
+    .tool-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .tool-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--box-bg);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+    .tool-btn:hover { border-color: var(--accent-cyan); background: var(--card-bg); }
   </style>
 </head>
 <body>
@@ -305,66 +345,58 @@
 
     <div class="card">
       <div class="summary-header">
-        <h3>⚙️ Mga Pagpipilian sa Ulat</h3>
+        <h3>⚙️ Mga Pagpipilian sa Buod</h3>
         <button class="btn btn-primary" id="editBtn" onclick="toggleEdit()">I-edit Lahat</button>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 12px;">
         <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
           <label style="font-size: 0.8rem; font-weight: 650; color: var(--text-muted); min-width: 110px; flex-shrink: 0;">Haba ng Buod:</label>
-          <select id="summaryLengthSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="reprocessContent()">
-            <option value="15">15% (Maikling Buod)</option>
+          <select id="summaryLengthSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="generateSummaryOnly()">
             <option value="30">30% (Katamtaman)</option>
-            <option value="45" selected>45% (Standard Detalye)</option>
-            <option value="60">60% (Mahabang Bersyon)</option>
-            <option value="75">75% (Kalahati pataas / Halos Buo)</option>
-          </select>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-          <label style="font-size: 0.8rem; font-weight: 650; color: var(--text-muted); min-width: 110px; flex-shrink: 0;">Wika ng Paliwanag:</label>
-          <select id="explanationLangSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="reprocessContent()">
-            <option value="taglish" selected>Taglish (Pang-report)</option>
-            <option value="english">English</option>
-            <option value="tagalog">Tagalog</option>
-          </select>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-          <label style="font-size: 0.8rem; font-weight: 650; color: var(--text-muted); min-width: 110px; flex-shrink: 0;">Haba ng Paliwanag:</label>
-          <select id="explanationLengthSelect" class="btn" style="padding: 6px 10px; width: 100%;" onchange="reprocessContent()">
-            <option value="short">Maikling Overview (3 Points)</option>
-            <option value="medium" selected>Katamtaman (Standard)</option>
-            <option value="detailed">Detalyadong Paliwanag (Comprehensive)</option>
+            <option value="50" selected>50% (Detalyadong Buod)</option>
+            <option value="75">75% (Komprehensibo / Mahaba)</option>
+            <option value="90">90% (Halos Buo)</option>
           </select>
         </div>
       </div>
     </div>
-
-    <div class="card" id="explanationCard">
-      <div class="summary-header">
-        <h3 style="color: var(--accent-orange);">💡 Paliwanag (Overview)</h3>
-        <div class="action-buttons">
-          <button class="btn btn-primary" id="expFullscreenBtn" onclick="toggleBoxFullscreen('explanationCard', 'expFullscreenBtn')">⛶ Fullscreen</button>
-          <button class="btn" onclick="copyText(explanationOutput.innerText, 'Nakopya na ang Paliwanag!')">Kopyahin</button>
-        </div>
+    
+      <!-- ON-DEMAND TOOL BUTTONS -->
+      <div class="tool-bar">
+        <button class="tool-btn" onclick="generateExplanationOnDemand()">💡 Gumawa ng Paliwanag</button>
+        <button class="tool-btn" onclick="generateHandwrittenOnDemand()">✍️ Gawing Sulat-Kamay</button>
+        <button class="tool-btn" onclick="generateQuizOnDemand('short')">📝 Maikling Quiz (10 Qs)</button>
+        <button class="tool-btn" onclick="generateQuizOnDemand('long')">📚 Mahabang Quiz (25 Qs)</button>
       </div>
-      <div class="explanation-box" id="explanationOutput" contenteditable="false">Dito lalabas ang maikling paliwanag at konteksto para sa iyong ulat...</div>
-    </div>
-
+      
+    <!-- MAIN SUMMARY CARD -->
     <div class="card" id="summaryCard">
       <div class="summary-header">
         <h3 style="color: var(--accent-cyan);">📑 Mismong Buod</h3>
         <div class="action-buttons">
-          <button class="btn btn-primary" id="sumFullscreenBtn" onclick="toggleBoxFullscreen('summaryCard', 'sumFullscreenBtn')">⛶ Fullscreen</button>
+          <button class="btn btn-primary" id="sumFullscreenBtn" onclick="toggleBoxFullscreen('summaryCard', 'sumFullscreenBtn')">⛶ Fullscreen/Back</button>
           <button class="btn" onclick="copyText(summaryOutput.innerText, 'Nakopya na ang Buod!')">Kopyahin</button>
           <button class="btn btn-primary" onclick="shareSummary()">I-share</button>
         </div>
       </div>
       <div class="summary-box" id="summaryOutput" contenteditable="false">Dito lalabas ang buod ng buong dokumento...</div>
+</div>
+    
+
+    <!-- PALIWANAG CARD (LAZY LOADED) -->
+    <div class="card" id="explanationCard">
+      <div class="summary-header">
+        <h3 style="color: var(--accent-orange);">💡 Paliwanag ng Buod</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="expFullscreenBtn" onclick="toggleBoxFullscreen('explanationCard', 'expFullscreenBtn')">⛶ Fullscreen/Back</button>
+          <button class="btn" onclick="copyText(explanationOutput.innerText, 'Nakopya na ang Paliwanag!')">Kopyahin</button>
+        </div>
+      </div>
+      <div class="explanation-box" id="explanationOutput" contenteditable="false">Ginagawa ang paliwanag...</div>
     </div>
 
-    <!-- SULATIFY - BUOD TO HANDWRITTEN -->
-    <div class="card" id="handwrittenCard" style="margin-top:20px;">
+    <!-- SULAT KAMAY CARD (LAZY LOADED) -->
+    <div class="card" id="handwrittenCard">
       <div class="summary-header">
         <h3 style="color: var(--accent-cyan);">✍️ Sulat Kamay na Buod</h3>
         <div class="action-buttons">
@@ -373,62 +405,55 @@
             <option value="font-kalam">Kalam - Malinis</option>
             <option value="font-patrick">Patrick Hand</option>
             <option value="font-shadows">Shadows - Doctor</option>
-            <option value="font-reenie">Reenie Beanie</option>
-            <option value="font-indie">Indie Flower</option>
-            <option value="font-architect">Architects Daughter</option>
-            <option value="font-gloria">Gloria</option>
-            <option value="font-handlee">Handlee</option>
-            <option value="font-schoolbell">Schoolbell</option>
-            <option value="font-dancing">Dancing Script</option>
             <option value="font-rock">Rock Salt</option>
-            <option value="font-permanent">Permanent Marker</option>
-            <option value="font-nothing">Nothing You Could Do</option>
-            <option value="font-walter">Walter Turncoat</option>
-            <option value="font-gochi">Gochi Hand</option>
-            <option value="font-girl">Girl Next Door</option>
-            <option value="font-sue">Sue Ellen</option>
-            <option value="font-zeyada">Zeyada</option>
           </select>
-
           <select id="hw-ink" class="btn" onchange="changeInk(this.value)">
             <option value="ink-black">Black</option>
             <option value="ink-blue">Blue</option>
           </select>
-
           <select id="hw-highlight" class="btn" onchange="toggleHighlight(this.value)">
             <option value="with">May Highlight</option>
             <option value="without">Walang Highlight</option>
           </select>
-
           <select id="hw-paper" class="btn" onchange="changePaper(this.value)">
+            <option value="yellow-pad" selected>Yellow Pad</option>
             <option value="lined-paper">Lined</option>
-            <option value="yellow-pad">Yellow Pad</option>
             <option value="plain">Plain</option>
           </select>
-
-          <button class="btn" onclick="window.print()">🖨️ I-print</button>
-          <button class="btn btn-primary" id="hwFullscreenBtn" onclick="toggleBoxFullscreen('handwrittenCard', 'hwFullscreenBtn')">⛶ Fullscreen</button>
+          <button class="btn" onclick="window.print()">🖨️ Print</button>
+          <button class="btn btn-primary" id="hwFullscreenBtn" onclick="toggleBoxFullscreen('handwrittenCard', 'hwFullscreenBtn')">⛶ Fullscreen/Back</button>
         </div>
       </div>
-      <div class="summary-box handwritten font-caveat ink-black lined-paper" id="handwrittenOutput" contenteditable="false" style="font-size:24px; line-height:2; min-height:250px; padding:20px;">Dito lalabas ang buod na sulat kamay...</div>
+      <div class="summary-box handwritten font-caveat ink-black yellow-pad" id="handwrittenOutput" contenteditable="false" style="font-size:24px; line-height:2; min-height:250px; padding:20px;">Dito lalabas ang buod na sulat kamay...</div>
     </div>
+
+    <!-- QUIZ GENERATOR CARD (LAZY LOADED) -->
+    <div class="card" id="quizCard">
+      <div class="summary-header">
+        <h3 style="color: #10b981;">📝 Pagsusulit / Quiz</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="quizFullscreenBtn" onclick="toggleBoxFullscreen('quizCard', 'quizFullscreenBtn')">⛶ Fullscreen/Back</button>
+          <button class="btn" onclick="copyText(quizOutput.innerText, 'Nakopya na ang Quiz!')">Kopyahin</button>
+        </div>
+      </div>
+      <div class="quiz-box" id="quizOutput" contenteditable="false">Inihahanda ang mga katanungan...</div>
+    </div>
+
   </div>
   
   <div class="fab-ai" onclick="toggleHistory()">History</div>
 
-</body>
-</html>
-
-
-<script>
+  <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     const fileInput = document.getElementById('fileInput');
     const statusDiv = document.getElementById('status');
     const summaryOutput = document.getElementById('summaryOutput');
     const explanationOutput = document.getElementById('explanationOutput');
+    const quizOutput = document.getElementById('quizOutput');
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     const historySection = document.getElementById('historySection');
     const historyList = document.getElementById('historyList');
+    
     let rawExtractedText = '';
     let currentFileName = '';
     let originalSummaryText = "";
@@ -449,30 +474,57 @@
       document.getElementById('toggleBall').innerText = next === 'dark' ? '🌙' : '☀️';
     }
 
+        function showOnlyCard(cardToShowId) {
+      // Huwag burahin o i-reset ang text, i-toggle lang ang display kung kinakailangan
+      const cards = ['summaryCard', 'explanationCard', 'handwrittenCard', 'quizCard'];
+      
+      cards.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (id === cardToShowId) {
+            el.style.display = 'block';
+            el.classList.add('fullscreen-card');
+          } else {
+            // Itago ang iba nang hindi binubura ang laman
+            el.style.display = 'none';
+            el.classList.remove('fullscreen-card');
+          }
+        }
+      });
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function triggerFileSelect() { fileInput.click(); }
 
     fileInput.addEventListener('change', async (event) => {
       const file = event.target.files[0];
+      
       if (!file) return;
       currentFileName = file.name;
       fileNameDisplay.innerText = currentFileName;
       statusDiv.innerText = '• PROCESSING: Binabasa ang file...';
-      summaryOutput.innerText = 'Naglo-load pa ang mga pahina...';
-      explanationOutput.innerText = 'Inihahanda ang paliwanag...';
-      const hw = document.getElementById('handwrittenOutput');
-      if(hw) hw.innerText = 'Ginagawa ang sulat kamay...';
+      summaryOutput.innerText = 'Ginagawa ang buod...';
+      
+      // Hide other sections on new file upload
+      document.getElementById('explanationCard').style.display = 'none';
+      document.getElementById('handwrittenCard').style.display = 'none';
+      document.getElementById('quizCard').style.display = 'none';
+
       try {
         const fileName = file.name.toLowerCase();
         if (fileName.endsWith('.pdf')) rawExtractedText = await extractTextFromPDF(file);
         else if (fileName.endsWith('.docx')) rawExtractedText = await extractTextFromWord(file);
         else if (fileName.endsWith('.txt')) rawExtractedText = await extractTextFromTxt(file);
         else throw new Error('Hindi suportadong uri ng file.');
+
         if (!rawExtractedText || rawExtractedText.trim().length === 0) {
           statusDiv.innerText = '• ERROR: Walang nabasang text.';
           return;
         }
-        reprocessContent();
-        statusDiv.innerText = '• Summary & Explanation Complete!';
+
+        generateSummaryOnly();
+        statusDiv.innerText = '• Complete: Handa na ang buod!';
       } catch (err) {
         console.error(err);
         statusDiv.innerText = '• ERROR: ' + err.message;
@@ -507,122 +559,247 @@
       });
     }
 
+    // STEP 1: SUMMARY ONLY (Mas Mahaba at Komprehensibo)
+    function generateSummaryOnly() {
+      if (!rawExtractedText) return;
+      const percentageVal = parseInt(document.getElementById('summaryLengthSelect').value) || 50;
+      
+      let lines = rawExtractedText.split('\n').map(l => l.trim()).filter(l => l.length > 30);
+      if (lines.length < 15) {
+        let sentences = rawExtractedText.match(/[^.!?]+[.!?]+/g) || [rawExtractedText];
+        lines = sentences.map(s => s.trim()).filter(s => s.length > 20);
+      }
+
+      let scored = lines.map((line, index) => {
+        let score = 0;
+        let lower = line.toLowerCase();
+        if (/[A-Z]{3,}/.test(line)) score += 3;
+        if (lower.includes('important') || lower.includes('definition') || lower.includes('function') || lower.includes('causes') || lower.includes('treatment')) score += 5;
+        if (/\d+%?/.test(line)) score += 2;
+        if (index < 10) score += 2;
+        return { line, score, index };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      let targetCount = Math.floor(lines.length * (percentageVal / 100));
+      targetCount = Math.max(8, targetCount);
+      
+      if (targetCount > lines.length) targetCount = lines.length;
+      let top = scored.slice(0, targetCount);
+      top.sort((a, b) => a.index - b.index);
+
+      const summaryResult = top.map(item => `• ${item.line}`).join('\n\n');
+      originalSummaryText = summaryResult;
+      summaryOutput.innerText = summaryResult;
+
+      saveToHistory(currentFileName, summaryResult);
+    }
+
+    // ON-DEMAND: PALIWANAG
+    function generateExplanationOnDemand() {
+      if (!originalSummaryText) return alert("Mag-upload muna ng file.");
+      showOnlyCard('explanationCard'); // Itatago ang buo at iiwan lang ang Paliwanag
+      
+      let lines = originalSummaryText.split('\n').map(l => l.replace('•','').trim()).filter(l => l.length > 15);
+      let explanation = `📌 BUONG PALIWANAG NG BUOD (${lines.length} Puntos):\n\n`;
+
+      lines.forEach((line, i) => {
+        explanation += `👉 Punto ${i+1}: ${line}\n   ↳ Paliwanag: Mahalaga itong punto na ito dahil binibigyang-diin nito ang pangunahing ideya kaugnay sa paksa.\n\n`;
+      });
+
+      explanationOutput.innerText = explanation;
+    }
+
+    // ON-DEMAND: HANDWRITTEN
+    function generateHandwrittenOnDemand() {
+      if (!originalSummaryText) return alert("Mag-upload muna ng file.");
+      showOnlyCard('handwrittenCard');
+      const card = document.getElementById('handwrittenCard');
+      card.style.display = 'block';
+      card.scrollIntoView({ behavior: 'smooth' });
+
+      const hw = document.getElementById('handwrittenOutput');
+      hw.innerHTML = highlightImportantTerms(originalSummaryText);
+      applyAll();
+    }
+
+        // Global variable para pagtaguan ng sagot para ma-check mamaya
+    let currentQuizAnswers = [];
+
+    function generateQuizOnDemand(type) {
+      if (!originalSummaryText) return alert("Mag-upload muna ng file.");
+      showOnlyCard('quizCard');
+      const card = document.getElementById('quizCard');
+      card.style.display = 'block';
+      card.scrollIntoView({ behavior: 'smooth' });
+
+      let lines = originalSummaryText.split('\n').map(l => l.replace('•','').trim()).filter(l => l.length > 20);
+      
+      if (lines.length < 5) {
+        return alert("Kulang ang detalye sa buod para makabuo ng quiz. Subukang pataasan ang haba ng buod.");
+      }
+
+      let shuffledLines = [...lines].sort(() => Math.random() - 0.5);
+      let totalItems = type === 'short' ? 10 : 25;
+      if(shuffledLines.length < totalItems) totalItems = shuffledLines.length;
+
+      let quizHTML = "";
+      currentQuizAnswers = []; // I-reset ang sagot
+
+      if (type === 'short') {
+        quizHTML += `<h3>📝 MAIKLING PAGSUSULIT (Random Multiple Choice - 10 Items)</h3><br>`;
+        
+        for(let i = 0; i < totalItems; i++) {
+          let sentence = shuffledLines[i];
+          let words = sentence.split(' ').filter(w => w.length > 4);
+          let keyWord = words[Math.floor(Math.random() * words.length)] || "Konsepto";
+          let questionSentence = sentence.replace(keyWord, "________");
+
+          let distractors = [];
+          while(distractors.length < 3) {
+            let randomLine = lines[Math.floor(Math.random() * lines.length)];
+            let rWords = randomLine.split(' ').filter(w => w.length > 4 && w !== keyWord);
+            let rWord = rWords[Math.floor(Math.random() * rWords.length)];
+            if(rWord && !distractors.includes(rWord)) distractors.push(rWord);
+          }
+          while(distractors.length < 3) { distractors.push("Opsyon " + (distractors.length + 1)); }
+
+          let options = [keyWord, ...distractors].map(opt => opt ? opt.toUpperCase() : "");
+          options.sort(() => Math.random() - 0.5);
+
+          let correctIndex = options.indexOf(keyWord.toUpperCase());
+          let correctLetter = ['A', 'B', 'C', 'D'][correctIndex];
+          
+          // Itago ang tamang sagot para sa checking
+          currentQuizAnswers.push({ type: 'mc', correct: correctLetter, keyword: keyWord });
+
+          quizHTML += `<div class="quiz-item" data-index="${i}" style="margin-bottom: 20px; line-height: 1.6;">`;
+          quizHTML += `  <b>${i+1}.</b> ${questionSentence}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;A) ${options[0]}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;B) ${options[1]}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;C) ${options[2]}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;D) ${options[3]}<br>`;
+          quizHTML += `  <input type="text" class="user-answer-input" placeholder="Ilagay ang titik (A, B, C, D)..." style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">`;
+          quizHTML += `  <div class="feedback-msg" style="margin-top: 4px; font-weight: bold; font-size: 0.9rem;"></div>`;
+          quizHTML += `</div>`;
+        }
+
+      } else {
+        quizHTML += `<h3>📚 MAHABANG PAGSUSULIT (25 Items)</h3><br>`;
+        quizHTML += `<h4>--- BAHAGI I: MULTIPLE CHOICE (1-15) ---</h4><br>`;
+        
+        let mcCount = Math.min(15, shuffledLines.length);
+        for(let i = 0; i < mcCount; i++) {
+          let sentence = shuffledLines[i];
+          let words = sentence.split(' ').filter(w => w.length > 4);
+          let keyWord = words[Math.floor(Math.random() * words.length)] || "Konsepto";
+          let questionSentence = sentence.replace(keyWord, "________");
+
+          let distractors = [];
+          while(distractors.length < 3) {
+            let randomLine = lines[Math.floor(Math.random() * lines.length)];
+            let rWords = randomLine.split(' ').filter(w => w.length > 4 && w !== keyWord);
+            let rWord = rWords[Math.floor(Math.random() * rWords.length)];
+            if(rWord && !distractors.includes(rWord)) distractors.push(rWord);
+          }
+          while(distractors.length < 3) { distractors.push("Opsyon " + (distractors.length + 1)); }
+
+          let options = [keyWord, ...distractors].map(opt => opt ? opt.toUpperCase() : "");
+          options.sort(() => Math.random() - 0.5);
+
+          let correctIndex = options.indexOf(keyWord.toUpperCase());
+          let correctLetter = ['A', 'B', 'C', 'D'][correctIndex];
+          
+          currentQuizAnswers.push({ type: 'mc', correct: correctLetter, keyword: keyWord });
+
+          quizHTML += `<div class="quiz-item" data-index="${i}" style="margin-bottom: 20px; line-height: 1.6;">`;
+          quizHTML += `  <b>${i+1}.</b> ${questionSentence}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;A) ${options[0]}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;B) ${options[1]}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;C) ${options[2]}<br>`;
+          quizHTML += `  &nbsp;&nbsp;&nbsp;&nbsp;D) ${options[3]}<br>`;
+          quizHTML += `  <input type="text" class="user-answer-input" placeholder="Ilagay ang titik (A, B, C, D)..." style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">`;
+          quizHTML += `  <div class="feedback-msg" style="margin-top: 4px; font-weight: bold; font-size: 0.9rem;"></div>`;
+          quizHTML += `</div>`;
+        }
+
+        quizHTML += `<br><h4>--- BAHAGI II: ENUMERATION (16-25) ---</h4><br>`;
+        let enumIndex = 16;
+        for(let i = mcCount; i < totalItems && enumIndex <= 25; i++) {
+          let sentence = shuffledLines[i] || "Magbigay ng mahalagang konsepto mula sa paksa.";
+          
+          currentQuizAnswers.push({ type: 'enum', keyword: sentence });
+
+          quizHTML += `<div class="quiz-item" data-index="${i}" style="margin-bottom: 20px; line-height: 1.6;">`;
+          quizHTML += `  <b>${enumIndex}.</b> Magbigay ng impormasyon tungkol sa: <i>"${sentence.substring(0, 60)}..."</i><br>`;
+          quizHTML += `  <textarea rows="2" class="user-answer-input" placeholder="I-type ang iyong sagot dito..." style="margin-top:6px; width:100%; padding:8px; border-radius:8px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);"></textarea>`;
+          quizHTML += `  <div class="feedback-msg" style="margin-top: 4px; font-weight: bold; font-size: 0.9rem;"></div>`;
+          quizHTML += `</div>`;
+          enumIndex++;
+        }
+      }
+
+      // Ilagay ang Check Answer Button sa pinaka-ibaba ng quiz box
+      quizHTML += `<br><button onclick="checkUserAnswers()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--accent-cyan), var(--accent-orange)); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:1rem;">✓ I-check ang Aking mga Sagot</button>`;
+      quizOutput.innerHTML = quizHTML;
+    }
+
+    function checkUserAnswers() {
+      const quizItems = document.querySelectorAll('.quiz-item');
+      let score = 0;
+      let totalMC = 0;
+
+      quizItems.forEach((item, idx) => {
+        let ansData = currentQuizAnswers[idx];
+        let inputField = item.querySelector('.user-answer-input');
+        let feedbackDiv = item.querySelector('.feedback-msg');
+        let userVal = inputField.value.trim().toUpperCase();
+
+        if (ansData.type === 'mc') {
+          totalMC++;
+          if (userVal === ansData.correct) {
+            score++;
+            feedbackDiv.style.color = '#10b981';
+            feedbackDiv.innerText = `✔ Tama! (Ang tamang sagot ay ${ansData.correct}: ${ansData.keyword})`;
+          } else {
+            feedbackDiv.style.color = '#ef4444';
+            feedbackDiv.innerText = `✖ Mali. Ang tamang sagot ay ${ansData.correct} (${ansData.keyword})`;
+          }
+        } else {
+          // Para sa Enumeration (bibigyan ng puntos kung may in-type na sagot)
+          if (userVal.length > 3) {
+            score++;
+            feedbackDiv.style.color = '#3b82f6';
+            feedbackDiv.innerText = `✔ Naitala ang iyong sagot. Suriin ito base sa buod: "${ansData.keyword.substring(0, 40)}..."`;
+          } else {
+            feedbackDiv.style.color = '#ef4444';
+            feedbackDiv.innerText = `✖ Walang sapat na sagot na nailagay.`;
+          }
+        }
+      });
+
+      alert(`Tapos na ang pag-check! Ang iyong score sa Multiple Choice ay ${score} / ${totalMC}`);
+    }
+    
     // FULLSCREEN
     function toggleBoxFullscreen(cardId, btnId) {
       const card = document.getElementById(cardId);
       const btn = document.getElementById(btnId);
       const isFs = card.classList.toggle('fullscreen-card');
-      if(btn) btn.innerText = isFs ? '⤫ Lumabas' : '⛶ Fullscreen';
+      if(btn) btn.innerText = isFs ? '⤫ Back' : '⛶ Fullscreen/back';
     }
 
-    // HIGHLIGHT - ISA LANG - WALANG DOBLE
-function highlightImportantTerms(text){
-  let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  html=html.replace(/\b([A-Z]{2,}(?:\s+[A-Z]{2,})*)\b/g,'<span class="term-red">$1</span>');
-  html=html.replace(/\b([A-Z][a-z]*oma[s]?)\b/g,'<span class="term-blue">$1</span>');
-  html=html.replace(/\b(tumors?|brain|spinal cord|meninges)\b/gi,'<span class="term-orange">$1</span>');
-  return html;
-}
-function generateExtractiveSummary(text) {
-  const percentageVal = document.getElementById('summaryLengthSelect') ? parseInt(document.getElementById('summaryLengthSelect').value) : 45;
-  let lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 40);
-  if (lines.length < 15) {
-    let sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-    lines = sentences.map(s => s.trim()).filter(s => s.length > 25);
-  }
-
-  let scored = lines.map((line, index) => {
-    let score = 0;
-    let lower = line.toLowerCase();
-    if (/[A-Z]{3,}/.test(line)) score += 3;
-    if (lower.includes('important') || lower.includes('definition') || lower.includes('brain') || lower.includes('tumor') || lower.includes('disease') || lower.includes('hydrocephalus') || lower.includes('syndrome')) score += 5;
-    if (lower.includes('function') || lower.includes('causes') || lower.includes('treatment')) score += 3;
-    if (/\d+%?/.test(line)) score += 2;
-    if (index < 10) score += 2;
-    return { line, score, index };
-  });
-
-  scored.sort((a, b) => b.score - a.score);
-  let ratio = percentageVal / 100;
-  let targetCount = Math.floor(lines.length * ratio);
-  targetCount = Math.max(5, targetCount);
-  
-  if(lines.length > 500){
-    let maxLimit = percentageVal <= 15 ? 40 : percentageVal <= 30 ? 60 : percentageVal <= 45 ? 80 : percentageVal <= 60 ? 120 : 150;
-    if(targetCount > maxLimit) targetCount = maxLimit;
-  }
-  
-  if (targetCount > lines.length) targetCount = lines.length;
-  let top = scored.slice(0, targetCount);
-  top.sort((a, b) => a.index - b.index);
-  return top.map(item => `• ${item.line}`).join('\n\n');
-}
-
-function generateExplanation(fullText, summaryText){
-  const lang = document.getElementById('explanationLanguageSelect') ? document.getElementById('explanationLanguageSelect').value : 'taglish';
-  
-  // Gamitin yung buong summary - hindi fullText lang
-  let source = summaryText || fullText;
-  let lines = source.split('\n').map(l => l.replace('•','').trim()).filter(l => l.length > 20);
-  
-  let explanation = "";
-  
-  if(lang === 'taglish' || lang === 'tl'){
-    explanation += `📌 BUONG PALIWANAG NG BUOD (${lines.length} puntos):\n\n`;
-    lines.forEach((line, i) => {
-      let lower = line.toLowerCase();
-      let simple = "";
-      
-      if(lower.includes('brain') || lower.includes('cerebral')){
-        simple = `👉 Ibig sabihin, yung utak - ${line.substring(0,120)}... Sa madaling salita, importante ito sa pag-iisip at galaw.`;
-      } else if(lower.includes('tumor') || lower.includes('oma')){
-        simple = `👉 Tumor ito - ${line.substring(0,120)}... Ibig sabihin, may bukol na pwedeng benign o malignant.`;
-      } else if(lower.includes('hydrocephalus')){
-        simple = `👉 Hydrocephalus - ${line.substring(0,120)}... Ibig sabihin, may sobrang fluid sa utak.`;
-      } else if(lower.includes('disease') || lower.includes('syndrome')){
-        simple = `👉 Sakit ito - ${line.substring(0,120)}... Kailangan maintindihan sintomas at gamot.`;
-      } else {
-        simple = `👉 Punto ${i+1}: ${line.substring(0,150)}... Sa madaling salita, ${line.substring(0,100)}.`;
-      }
-      
-      explanation += `${simple}\n\n`;
-    });
-    
-    explanation += `\n💡 BUOD NG PALIWANAG: Lahat ng ${lines.length} puntos sa taas ay konektado - tungkol sa utak, sakit, at paano gamutin. Basahin ulit yung sulat kamay para mas maalala!`;
-    
-  } else {
-    explanation += `📌 FULL EXPLANATION OF SUMMARY (${lines.length} points):\n\n`;
-    lines.forEach((line, i) => {
-      explanation += `👉 Point ${i+1}: ${line.substring(0,150)}... In simple terms, this is important for understanding the topic.\n\n`;
-    });
-  }
-  
-  return explanation;
-}
-
-    // BUONG TAMANG reprocessContent - MAY HANDWRITTEN NA + HISTORY
-function reprocessContent() {
-  if (!rawExtractedText) return;
-  const summary = generateExtractiveSummary(rawExtractedText);
-  const explanation = generateExplanation(rawExtractedText, summary);
-  originalSummaryText = summary;
-  summaryOutput.innerText = summary;
-  const hw = document.getElementById('handwrittenOutput');
-  if(hw){
-    const hlSel = document.getElementById('hw-highlight');
-    if(hlSel && hlSel.value.toLowerCase().includes('without')){
-      hw.innerText = summary;
-    } else {
-      hw.innerHTML = highlightImportantTerms(summary);
+    function highlightImportantTerms(text){
+      let html=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      html=html.replace(/\b([A-Z]{2,}(?:\s+[A-Z]{2,})*)\b/g,'<span class="term-red">$1</span>');
+      html=html.replace(/\b([A-Z][a-z]*oma[s]?)\b/g,'<span class="term-blue">$1</span>');
+      html=html.replace(/\b(tumors?|brain|spinal cord|meninges)\b/gi,'<span class="term-orange">$1</span>');
+      return html;
     }
-  }
-  explanationOutput.innerText = explanation;
-  saveToHistory(currentFileName, summary, explanation);
-  applyAll();
-}
-    function saveToHistory(title, content, explanation) {
+
+    function saveToHistory(title, content) {
       let history = JSON.parse(localStorage.getItem('pdf_summaries') || '[]');
-      history.unshift({ id: Date.now(), title: title, content: content, explanation: explanation, date: new Date().toLocaleDateString() });
+      history.unshift({ id: Date.now(), title: title, content: content, date: new Date().toLocaleDateString() });
       if (history.length > 20) history.pop();
       localStorage.setItem('pdf_summaries', JSON.stringify(history));
       renderHistory();
@@ -635,9 +812,9 @@ function reprocessContent() {
         return;
       }
       historyList.innerHTML = history.map(item => `
-        <div class="history-item">
-          <div class="history-title"><span>📎 ${item.title}</span><span>${item.date}</span></div>
-          <div class="history-preview">${item.content.substring(0,100)}...</div>
+        <div class="history-item" style="padding:10px; border-bottom:1px solid var(--border-color);">
+          <div class="history-title" style="display:flex; justify-content:space-between; font-weight:700;"><span>📎 ${item.title}</span><span>${item.date}</span></div>
+          <div class="history-preview" style="font-size:0.85rem; color:var(--text-muted); margin:4px 0;">${item.content.substring(0,80)}...</div>
           <div style="display:flex; justify-content:flex-end; gap:6px;">
             <button class="btn btn-primary" onclick="loadHistoryItem(${item.id})">Tingnan</button>
             <button class="btn btn-danger" onclick="deleteHistoryItem(${item.id})">Burahin</button>
@@ -646,17 +823,15 @@ function reprocessContent() {
       `).join('');
     }
 
-    // DITO INAYOS - MAY HANDWRITTEN NA SA HISTORY
     function loadHistoryItem(id) {
       let history = JSON.parse(localStorage.getItem('pdf_summaries') || '[]');
       let item = history.find(h => h.id === id);
+      
       if (item) {
         currentFileName = item.title;
         fileNameDisplay.innerText = item.title;
+        originalSummaryText = item.content;
         summaryOutput.innerText = item.content;
-        const hw = document.getElementById('handwrittenOutput');
-        if(hw) hw.innerHTML = highlightImportantTerms(item.content);
-        explanationOutput.innerText = item.explanation || 'Walang paliwanag.';
         statusDiv.innerText = '• LOADED: Na-load mula sa History.';
         toggleHistory();
       }
@@ -669,6 +844,11 @@ function reprocessContent() {
       renderHistory();
     }
 
+    function clearAllHistory() {
+      localStorage.removeItem('pdf_summaries');
+      renderHistory();
+    }
+
     function toggleHistory() {
       historySection.style.display = historySection.style.display === 'block' ? 'none' : 'block';
     }
@@ -677,87 +857,68 @@ function reprocessContent() {
       const isEditing = summaryOutput.contentEditable === 'true';
       summaryOutput.contentEditable = !isEditing;
       explanationOutput.contentEditable = !isEditing;
+      quizOutput.contentEditable = !isEditing;
+      document.getElementById('editBtn').innerText = isEditing ? 'I-edit Lahat' : 'Tapusin ang Pag-edit';
     }
 
     function copyText(text, msg) { navigator.clipboard.writeText(text).then(() => alert(msg)); }
     function shareSummary() {
-      const textToShare = `📄 ${currentFileName}:\n\n${explanationOutput.innerText}\n\n${summaryOutput.innerText}`;
+      const textToShare = `📄 ${currentFileName}:\n\n${summaryOutput.innerText}`;
       if (navigator.share) navigator.share({ title: 'Summary', text: textToShare });
       else { navigator.clipboard.writeText(textToShare); alert('Na-copy na!'); }
     }
     
-function applyAll(){
-  const hw = document.getElementById('handwrittenOutput');
-  const fontSel = document.getElementById('hw-font');
-  const inkSel = document.getElementById('hw-ink');
-  const paperSel = document.getElementById('hw-paper');
-  if(!hw) return;
+    function applyAll(){
+      const hw = document.getElementById('handwrittenOutput');
+      const fontSel = document.getElementById('hw-font');
+      const inkSel = document.getElementById('hw-ink');
+      const paperSel = document.getElementById('hw-paper');
+      if(!hw) return;
 
-  // FONT - Kalam, Caveat, Shadows, etc.
-  let f = fontSel ? fontSel.value.toLowerCase() : 'caveat';
-  if(f.includes('kalam') || f.includes('malinis')) hw.style.setProperty('font-family', "'Kalam', cursive", 'important');
-  else if(f.includes('reenie')) hw.style.setProperty('font-family', "'Reenie Beanie', cursive", 'important');
-  else if(f.includes('shadows') || f.includes('doctor')) hw.style.setProperty('font-family', "'Shadows Into Light', cursive", 'important');
-  else if(f.includes('patrick')) hw.style.setProperty('font-family', "'Patrick Hand', cursive", 'important');
- else if(f.includes('indie') || f.includes('babae')) hw.style.setProperty('font-family', "'Indie Flower', cursive", 'important');
-else if(f.includes('architect')) hw.style.setProperty('font-family', "'Architects Daughter', cursive", 'important');
-else if(f.includes('gloria') || f.includes('madalian')) hw.style.setProperty('font-family', "'Gloria Hallelujah', cursive", 'important');
-else if(f.includes('handlee')) hw.style.setProperty('font-family', "'Handlee', cursive", 'important');
-else if(f.includes('schoolbell')) hw.style.setProperty('font-family', "'Schoolbell', cursive", 'important');
-else if(f.includes('dancing') || f.includes('cursive')) hw.style.setProperty('font-family', "'Dancing Script', cursive", 'important');
- else if(f.includes('rock') || f.includes('lasing') || f.includes('pinaka')) hw.style.setProperty('font-family', "'Rock Salt', cursive", 'important');
-else if(f.includes('permanent') || f.includes('pentel') || f.includes('makapal')) hw.style.setProperty('font-family', "'Permanent Marker', cursive", 'important');
-else if(f.includes('nothing') || f.includes('doctor talaga')) hw.style.setProperty('font-family', "'Nothing You Could Do', cursive", 'important');
-else if(f.includes('walter') || f.includes('madumi')) hw.style.setProperty('font-family', "'Walter Turncoat', cursive", 'important');
-else if(f.includes('gochi') || f.includes('bata')) hw.style.setProperty('font-family', "'Gochi Hand', cursive", 'important');
-else if(f.includes('girl')) hw.style.setProperty('font-family', "'The Girl Next Door', cursive", 'important');
-else if(f.includes('sue')) hw.style.setProperty('font-family', "'Sue Ellen Francisco', cursive", 'important');
-else if(f.includes('zeyada')) hw.style.setProperty('font-family', "'Zeyada', cursive", 'important');
-else hw.style.setProperty('font-family', "'Caveat', cursive", 'important');
+      let f = fontSel ? fontSel.value.toLowerCase() : 'caveat';
+      if(f.includes('kalam')) hw.style.setProperty('font-family', "'Kalam', cursive", 'important');
+      else if(f.includes('shadows')) hw.style.setProperty('font-family', "'Shadows Into Light', cursive", 'important');
+      else if(f.includes('patrick')) hw.style.setProperty('font-family', "'Patrick Hand', cursive", 'important');
+      else if(f.includes('rock')) hw.style.setProperty('font-family', "'Rock Salt', cursive", 'important');
+      else hw.style.setProperty('font-family', "'Caveat', cursive", 'important');
 
-  // INK - BLUE / BLACK - may !important para talunin highlight
-  let ink = inkSel ? inkSel.value.toLowerCase() : 'black';
-  if(ink.includes('blue')) hw.style.setProperty('color', '#1e40af', 'important');
-  else hw.style.setProperty('color', '#111111', 'important');
+      let ink = inkSel ? inkSel.value.toLowerCase() : 'black';
+      if(ink.includes('blue')) hw.style.setProperty('color', '#1e40af', 'important');
+      else hw.style.setProperty('color', '#111111', 'important');
 
-  // PAPER + SAKTO SA GUHIT - 35px lahat
-  let paper = paperSel ? paperSel.value.toLowerCase() : 'lined';
-  hw.style.setProperty('line-height', '37px', 'important');
-  hw.style.setProperty('font-size', '23px', 'important');
-  hw.style.setProperty('background-size', '100% 32px', 'important');
-  hw.style.setProperty('padding-top', '2px', 'important');
+      let paper = paperSel ? paperSel.value.toLowerCase() : 'yellow-pad';
+      hw.style.setProperty('line-height', '37px', 'important');
+      hw.style.setProperty('font-size', '23px', 'important');
+      hw.style.setProperty('background-size', '100% 32px', 'important');
+      hw.style.setProperty('padding-top', '2px', 'important');
 
-  if(paper.includes('yellow')){
-    hw.style.setProperty('background-color', '#fef9c3', 'important');
-    hw.style.setProperty('background-image', 'repeating-linear-gradient(transparent 0px, transparent 31px, #a8d8ea 31px, #a8d8ea 32px)', 'important');
-  } else if(paper.includes('lined')){
-    hw.style.setProperty('background-color', '#fffef0', 'important');
-    hw.style.setProperty('background-image', 'repeating-linear-gradient(transparent 0px, transparent 31px, #a8d8ea 31px, #a8d8ea 32px)', 'important');
-  } else {
-    hw.style.setProperty('background-color', '#ffffff', 'important');
-    hw.style.setProperty('background-image', 'none', 'important');
-  }
-}
+      if(paper.includes('yellow')){
+        hw.style.setProperty('background-color', '#fef9c3', 'important');
+        hw.style.setProperty('background-image', 'repeating-linear-gradient(transparent 0px, transparent 31px, #a8d8ea 31px, #a8d8ea 32px)', 'important');
+      } else if(paper.includes('lined')){
+        hw.style.setProperty('background-color', '#fffef0', 'important');
+        hw.style.setProperty('background-image', 'repeating-linear-gradient(transparent 0px, transparent 31px, #a8d8ea 31px, #a8d8ea 32px)', 'important');
+      } else {
+        hw.style.setProperty('background-color', '#ffffff', 'important');
+        hw.style.setProperty('background-image', 'none', 'important');
+      }
+    }
 
-function changeFont(val){ applyAll(); }
-function changeInk(val){ applyAll(); }
-function changePaper(val){ applyAll(); }
+    function changeFont(val){ applyAll(); }
+    function changeInk(val){ applyAll(); }
+    function changePaper(val){ applyAll(); }
 
-function toggleHighlight(val){
-  const hw = document.getElementById('handwrittenOutput');
-  if(!hw) return;
-  if(!originalSummaryText || originalSummaryText === ""){
-    originalSummaryText = summaryOutput.innerText;
-  }
-  let v = val.toLowerCase();
-  if(v.includes('without') || v.includes('walang') || v.includes('wala')){
-    hw.innerText = originalSummaryText;
-  } else {
-    hw.innerHTML = highlightImportantTerms(originalSummaryText);
-  }
-  applyAll();
-}
-</script>
+    function toggleHighlight(val){
+      const hw = document.getElementById('handwrittenOutput');
+      if(!hw) return;
+      let v = val.toLowerCase();
+      if(v.includes('without') || v.includes('walang') || v.includes('wala')){
+        hw.innerText = originalSummaryText;
+      } else {
+        hw.innerHTML = highlightImportantTerms(originalSummaryText);
+      }
+      applyAll();
+    }
   </script>
 </body>
 </html>
